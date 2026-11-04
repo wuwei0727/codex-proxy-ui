@@ -112,7 +112,7 @@ const locale: UiLocale = {
     clearSort: label => `${label}: clear sorting`,
     columns: 'Visible columns',
     columnList: 'Table columns',
-    columnInstructions: 'Drag a handle to reorder columns, or focus it and use the up and down arrow keys.',
+    columnInstructions: 'Drag a handle to reorder columns, or focus it and press Up or Down',
     moveColumn: label => `Reorder ${label}`,
     movedColumn: (label, position) => `${label} moved to position ${position}`,
     reset: 'Reset to default',

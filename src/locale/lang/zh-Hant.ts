@@ -112,7 +112,7 @@ const locale: UiLocale = {
     clearSort: label => `${label}：取消排序`,
     columns: '顯示列',
     columnList: '表格列',
-    columnInstructions: '拖動手柄調整列順序，也可聚焦手柄後使用上下方向鍵移動。',
+    columnInstructions: '拖動手柄排序，或聚焦手柄後按上下方向鍵',
     moveColumn: label => `拖動調整${label}順序`,
     movedColumn: (label, position) => `${label}已移到第 ${position} 項`,
     reset: '恢復默認',
