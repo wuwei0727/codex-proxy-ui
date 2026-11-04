@@ -99,5 +99,6 @@ export interface UiLocale {
     moveColumn: (label: string) => string
     movedColumn: (label: string, position: number) => string
     reset: string
+    resizeColumn?: string
   }
 }

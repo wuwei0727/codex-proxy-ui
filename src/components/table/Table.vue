@@ -3,7 +3,7 @@ import type { ResolvedTableColumn, TableEmits, TableProps } from './types'
 import { Triangle } from '@lucide/vue'
 
 import { useResizeObserver } from '@vueuse/core'
-import { computed, nextTick, onMounted, shallowRef, useSlots, useTemplateRef, watch } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, shallowRef, useSlots, useTemplateRef, watch } from 'vue'
 import { useLocale } from '../../locale/context'
 import Empty from '../empty/Empty.vue'
 import Scrollbar from '../scrollbar/Scrollbar.vue'
@@ -31,6 +31,8 @@ const props = withDefaults(defineProps<TableProps<Row>>(), {
   showHeaderWhenEmpty: false,
   scrollbarAlwaysVisible: false,
   sort: undefined,
+  resizable: true,
+  headerAlign: 'center',
 })
 
 const emit = defineEmits<TableEmits>()
@@ -38,8 +40,150 @@ const emit = defineEmits<TableEmits>()
 const locale = useLocale()
 
 const slots = useSlots()
-const computedColumns = computed(() => resolveColumns(props.columns))
+const columnCustomWidths = shallowRef<Record<string, number>>({})
+const resizingColumnKey = shallowRef<string | null>(null)
+
+const storageKey = computed(() => props.tableId ? `codex-proxy:table-column-widths:${props.tableId}` : null)
+
+function readStoredWidths() {
+  if (!storageKey.value || typeof window === 'undefined')
+    return
+  try {
+    const raw = localStorage.getItem(storageKey.value)
+    if (raw) {
+      const parsed = JSON.parse(raw)
+      if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+        columnCustomWidths.value = parsed
+      }
+    }
+    else {
+      columnCustomWidths.value = {}
+    }
+  }
+  catch {
+    // fallback
+  }
+}
+
+watch(storageKey, readStoredWidths, { immediate: true })
+
+function persistWidths() {
+  if (!storageKey.value || typeof window === 'undefined')
+    return
+  try {
+    if (Object.keys(columnCustomWidths.value).length > 0) {
+      localStorage.setItem(storageKey.value, JSON.stringify(columnCustomWidths.value))
+    }
+    else {
+      localStorage.removeItem(storageKey.value)
+    }
+    if (props.tableId) {
+      window.dispatchEvent(new CustomEvent(`codex-proxy:table-widths-updated:${props.tableId}`, {
+        detail: { ...columnCustomWidths.value }
+      }))
+    }
+  }
+  catch {
+    // fallback
+  }
+}
+
+const effectiveColumns = computed(() => {
+  const custom = columnCustomWidths.value
+  return props.columns.map((column) => {
+    const customWidth = custom[column.key]
+    if (typeof customWidth === 'number') {
+      const minWidth = column.minWidth ?? (column.kind === 'status' ? 44 : 56)
+      const clampedWidth = Math.max(minWidth, customWidth)
+      return {
+        ...column,
+        width: clampedWidth,
+        basisWidth: clampedWidth,
+        fixedWidth: column.fixedWidth ?? true,
+      }
+    }
+    return column
+  })
+})
+
+const computedColumns = computed(() => resolveColumns(effectiveColumns.value))
 const resolvedTableStyle = computed(() => tableStyle(computedColumns.value))
+
+function canResizeColumn(column: ResolvedTableColumn<Row>, index: number) {
+  if (!props.resizable)
+    return false
+  if (index >= computedColumns.value.length - 1)
+    return false
+  if (column.kind === 'selection' || column.kind === 'expander')
+    return false
+  return true
+}
+
+let startX = 0
+let startWidth = 0
+let lastClickTime = 0
+let lastClickKey = ''
+
+function handleResizeStart(event: MouseEvent, column: ResolvedTableColumn<Row>) {
+  const now = Date.now()
+  if (lastClickKey === column.key && now - lastClickTime < 350) {
+    lastClickTime = 0
+    lastClickKey = ''
+    handleResetColumnWidth(column)
+    return
+  }
+  lastClickTime = now
+  lastClickKey = column.key
+
+  resizingColumnKey.value = column.key
+  startX = event.clientX
+  startWidth = columnCustomWidths.value[column.key] ?? column.basisWidth
+
+  // 最小宽度严格基于列配置 minWidth（默认根据列类型 44/56），杜绝误算导致拖动向右跳变
+  const minWidthLimit = column.minWidth ?? (column.kind === 'status' ? 44 : 56)
+  const effectiveMinWidth = Math.max(36, minWidthLimit)
+
+  const onMouseMove = (moveEvent: MouseEvent) => {
+    const delta = moveEvent.clientX - startX
+    const newWidth = Math.max(effectiveMinWidth, Math.round(startWidth + delta))
+    columnCustomWidths.value = {
+      ...columnCustomWidths.value,
+      [column.key]: newWidth,
+    }
+    updateScrollLayout()
+  }
+
+  const onMouseUp = () => {
+    window.removeEventListener('mousemove', onMouseMove, true)
+    window.removeEventListener('mouseup', onMouseUp, true)
+    document.body.style.removeProperty('cursor')
+    document.body.style.removeProperty('user-select')
+
+    const finalWidth = columnCustomWidths.value[column.key]
+    if (finalWidth !== undefined) {
+      persistWidths()
+      emit('columnResize', { key: column.key, width: finalWidth })
+    }
+    resizingColumnKey.value = null
+    void nextTick(updateScrollLayout)
+  }
+
+  document.body.style.cursor = 'col-resize'
+  document.body.style.userSelect = 'none'
+  window.addEventListener('mousemove', onMouseMove, true)
+  window.addEventListener('mouseup', onMouseUp, true)
+}
+
+function handleResetColumnWidth(column: ResolvedTableColumn<Row>) {
+  if (columnCustomWidths.value[column.key] === undefined)
+    return
+  const next = { ...columnCustomWidths.value }
+  delete next[column.key]
+  columnCustomWidths.value = next
+  persistWidths()
+  emit('columnResetWidth', column.key)
+  void nextTick(updateScrollLayout)
+}
 
 const retainedRows = shallowRef<Row[]>([])
 watch(
@@ -82,9 +226,25 @@ function handleTableScroll(payload: { scrollTop: number, scrollLeft: number }) {
   horizontalCanScrollRight.value = payload.scrollLeft < range - 1
 }
 
+function handleExternalReset() {
+  columnCustomWidths.value = {}
+  void nextTick(updateScrollLayout)
+}
+
 onMounted(async () => {
   await nextTick()
   updateScrollLayout()
+  if (typeof window !== 'undefined' && props.tableId) {
+    window.addEventListener(`codex-proxy:table-reset:${props.tableId}`, handleExternalReset)
+    window.addEventListener('storage', readStoredWidths)
+  }
+})
+
+onUnmounted(() => {
+  if (typeof window !== 'undefined' && props.tableId) {
+    window.removeEventListener(`codex-proxy:table-reset:${props.tableId}`, handleExternalReset)
+    window.removeEventListener('storage', readStoredWidths)
+  }
 })
 useResizeObserver(() => [scrollbarRef.value?.wrapRef, tableRef.value].filter(Boolean), updateScrollLayout)
 watch([() => displayRows.value.length, () => props.columns], async () => {
@@ -97,7 +257,7 @@ const headerRowClass = computed(() => [
   'font-bold text-z-text-secondary',
 ])
 const bodyRowClass = computed(() => (props.size === 'small' ? 'h-z-table-row-sm' : props.size === 'large' ? 'h-12' : 'h-z-table-row'))
-const cellPaddingClass = computed(() => (props.size === 'large' ? 'px-4' : 'px-3'))
+const cellPaddingClass = computed(() => (props.size === 'small' ? 'px-1.5' : props.size === 'large' ? 'px-4' : 'px-2'))
 const bodyTextClass = computed(() => (props.size === 'small' ? 'text-z-sm' : props.size === 'large' ? 'text-z-lg' : 'text-z'))
 const bodyCellFrameClass = computed(() =>
   props.size === 'small'
@@ -162,6 +322,24 @@ function bodyCellTitle(column: ResolvedTableColumn<Row>, row: Row) {
   return slots[column.key] ? undefined : cellTitle(column, row)
 }
 
+function headerAlignClass(column: ResolvedTableColumn<Row>) {
+  const align = column.headerAlign ?? props.headerAlign ?? 'center'
+  if (align === 'center')
+    return 'text-center'
+  if (align === 'right')
+    return 'text-right'
+  return 'text-left'
+}
+
+function headerJustifyClass(column: ResolvedTableColumn<Row>) {
+  const align = column.headerAlign ?? props.headerAlign ?? 'center'
+  if (align === 'center')
+    return 'justify-center'
+  if (align === 'right')
+    return 'justify-end'
+  return 'justify-start'
+}
+
 function columnSortDirection(column: ResolvedTableColumn<Row>) {
   return props.sort?.key === columnSortKey(column) ? props.sort.direction : undefined
 }
@@ -221,19 +399,27 @@ function sortButtonLabel(column: ResolvedTableColumn<Row>) {
               <th
                 v-for="(column, columnIndex) in computedColumns"
                 :key="column.key"
-                class="sticky top-0 z-30 whitespace-nowrap bg-(--z-table-header-bg) shadow-[0_10px_16px_-18px_var(--z-color-shadow)]"
+                class="relative group/th sticky top-0 select-none whitespace-nowrap bg-(--z-table-header-bg) shadow-[0_10px_16px_-18px_var(--z-color-shadow)]"
                 :class="[
                   column.paddingClass ?? cellPaddingClass,
-                  alignClass(column),
+                  headerAlignClass(column),
                   columnIndex === 0 ? 'rounded-l-z' : undefined,
                   columnIndex === computedColumns.length - 1 ? 'rounded-r-z' : undefined,
                   stickyClass(column, true),
+                  resizingColumnKey === column.key ? 'z-50' : 'hover:z-40 z-30',
                 ]"
                 :style="stickyStyle(column)"
                 scope="col"
                 :aria-sort="columnAriaSort(column)"
               >
-                <div :class="cellContentClass(column)" :data-column-motion="column.sticky ? undefined : column.key">
+                <div
+                  :class="[
+                    cellContentClass(column),
+                    'flex items-center min-w-0 max-w-full',
+                    headerJustifyClass(column),
+                  ]"
+                  :data-column-motion="column.sticky ? undefined : column.key"
+                >
                   <button
                     v-if="column.sortable"
                     type="button"
@@ -265,8 +451,25 @@ function sortButtonLabel(column: ResolvedTableColumn<Row>) {
                     </span>
                   </button>
                   <slot v-else :name="`header-${column.key}`" :column="column">
-                    {{ column.label }}
+                    <span class="truncate">{{ column.label }}</span>
                   </slot>
+                </div>
+                <div
+                  v-if="canResizeColumn(column, columnIndex)"
+                  class="z-table-resizer group/resizer absolute top-0 right-0 bottom-0 z-30 flex w-3.5 cursor-col-resize select-none touch-none items-center justify-center transition-colors hover:bg-z-primary/15"
+                  :class="{ 'bg-z-primary/20': resizingColumnKey === column.key }"
+                  :title="locale.table.resizeColumn ?? '拖动调整列宽，双击恢复默认'"
+                  @mousedown.stop.prevent="handleResizeStart($event, column)"
+                  @dblclick.stop.prevent="handleResetColumnWidth(column)"
+                >
+                  <div
+                    class="h-4 w-[2px] rounded-full bg-z-border transition-all duration-150 group-hover/th:h-4.5 group-hover/th:bg-z-text-quaternary group-hover/resizer:h-5 group-hover/resizer:w-1 group-hover/resizer:bg-z-primary group-hover/resizer:shadow-[0_0_6px_var(--z-color-primary)]"
+                    :class="[
+                      resizingColumnKey === column.key
+                        ? '!h-5 !w-1 !bg-z-primary !shadow-[0_0_8px_var(--z-color-primary)]'
+                        : ''
+                    ]"
+                  />
                 </div>
               </th>
             </tr>
@@ -350,3 +553,13 @@ function sortButtonLabel(column: ResolvedTableColumn<Row>) {
     </div>
   </div>
 </template>
+
+<style scoped>
+.z-table-resizer:hover > div,
+.z-table-resizer.is-resizing > div {
+  height: 1.25rem !important;
+  width: 3.5px !important;
+  background-color: var(--z-color-primary) !important;
+  box-shadow: 0 0 6px var(--z-color-primary) !important;
+}
+</style>

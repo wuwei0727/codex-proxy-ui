@@ -34,6 +34,7 @@ export interface TableColumn<Row extends TableRow = TableRow> {
   minWidth?: number
   fixed?: boolean | 'left' | 'right'
   align?: TableColumnAlign
+  headerAlign?: TableColumnAlign
   sortable?: boolean | string
   /** 列设置中是否允许隐藏；false 时始终保留。 */
   hideable?: boolean
@@ -41,6 +42,7 @@ export interface TableColumn<Row extends TableRow = TableRow> {
   defaultHidden?: boolean
   formatter?: (value: unknown, row: Row) => unknown
   emptyText?: string
+  paddingClass?: string
 }
 
 export interface TableSort {
@@ -58,6 +60,8 @@ export interface TableColumnOption {
 
 export interface TableEmits {
   sortChange: [sort: TableSort | undefined]
+  columnResize: [payload: { key: string, width: number }]
+  columnResetWidth: [key: string]
 }
 
 export type TableSlots<Row extends TableRow = TableRow> = NonNullable<Parameters<typeof Table<Row>>[1]>['slots']
@@ -74,6 +78,9 @@ export interface TableProps<Row extends TableRow> {
   showHeaderWhenEmpty?: boolean
   scrollbarAlwaysVisible?: boolean
   sort?: TableSort
+  tableId?: string
+  resizable?: boolean
+  headerAlign?: TableColumnAlign
 }
 
 export interface ResolvedTableColumn<Row extends TableRow = TableRow>

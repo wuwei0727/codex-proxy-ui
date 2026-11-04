@@ -116,6 +116,7 @@ const locale: UiLocale = {
     moveColumn: label => `拖动调整${label}顺序`,
     movedColumn: (label, position) => `${label}已移到第 ${position} 项`,
     reset: '恢复默认',
+    resizeColumn: '拖动调整列宽，双击恢复默认',
   },
 }
 

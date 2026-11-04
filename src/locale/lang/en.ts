@@ -116,6 +116,7 @@ const locale: UiLocale = {
     moveColumn: label => `Reorder ${label}`,
     movedColumn: (label, position) => `${label} moved to position ${position}`,
     reset: 'Reset to default',
+    resizeColumn: 'Drag to resize column, double-click to reset',
   },
 }
 

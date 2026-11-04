@@ -92,7 +92,7 @@ const columnRecipes: Record<TableColumnKind, ColumnRecipe> = {
   actions: {
     size: 'md',
     fixedWidth: true,
-    align: 'left',
+    align: 'center',
     truncate: false,
     paddingClass: 'px-3',
     sticky: 'right',
@@ -122,6 +122,7 @@ export function resolveColumns<Row extends TableRow>(
       basisWidth,
       fixedWidth: column.width !== undefined || (column.fixedWidth ?? recipe.fixedWidth ?? false),
       align: column.align ?? recipe.align,
+      headerAlign: column.headerAlign,
       truncate: recipe.truncate,
       contentClass: recipe.contentClass,
       paddingClass: recipe.paddingClass,
@@ -153,9 +154,6 @@ export function minimumTableWidth<Row extends TableRow>(columns: ResolvedTableCo
 }
 
 export function tableStyle<Row extends TableRow>(columns: ResolvedTableColumn<Row>[]) {
-  // 全部列都固定时按总宽度展示，避免浏览器再次均分剩余空间。
-  if (columns.every(column => column.fixedWidth))
-    return { width: `${minimumTableWidth(columns)}px` }
   return { width: `max(100%, ${minimumTableWidth(columns)}px)` }
 }
 

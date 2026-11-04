@@ -16,6 +16,18 @@ function readVisibility(value: string): Record<string, boolean> {
   return {}
 }
 
+function readWidths(value: string): Record<string, number> {
+  try {
+    const parsed: unknown = JSON.parse(value)
+    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed))
+      return Object.fromEntries(Object.entries(parsed).filter(([, width]) => typeof width === 'number'))
+  }
+  catch {
+    // 损坏的本地偏好回退到列定义
+  }
+  return {}
+}
+
 function readOrder(value: string): string[] {
   try {
     const parsed: unknown = JSON.parse(value)
@@ -53,6 +65,17 @@ export function useTableColumns<Row extends TableRow>(
       serializer: { read: readOrder, write: JSON.stringify },
     },
   )
+  const widths = useStorage<Record<string, number>>(
+    `codex-proxy:table-column-widths:${tableId}`,
+    {},
+    undefined,
+    {
+      shallow: true,
+      writeDefaults: false,
+      serializer: { read: readWidths, write: JSON.stringify },
+    },
+  )
+
 
   const orderedColumns = computed(() => {
     const columns = resolveColumns(toValue(source))
@@ -78,7 +101,21 @@ export function useTableColumns<Row extends TableRow>(
       states[0].visible = true
     return states
   })
-  const visibleColumns = computed(() => columnStates.value.filter(state => state.visible).map(state => state.column))
+  const visibleColumns = computed(() => columnStates.value.filter(state => state.visible).map((state) => {
+    const column = state.column
+    const customWidth = widths.value[column.key]
+    if (typeof customWidth === 'number') {
+      const minWidth = column.minWidth ?? (column.kind === 'status' ? 44 : 56)
+      const clampedWidth = Math.max(minWidth, customWidth)
+      return {
+        ...column,
+        width: clampedWidth,
+        basisWidth: clampedWidth,
+        fixedWidth: true,
+      }
+    }
+    return column
+  }))
   const columnOptions = computed<TableColumnOption[]>(() => columnStates.value
     .filter(({ column }) => column.label)
     .map(({ column, visible }) => ({
@@ -107,10 +144,41 @@ export function useTableColumns<Row extends TableRow>(
     order.value = [...new Set(keys.filter(key => movable.has(key)))]
   }
 
-  function resetColumns() {
+    function resetColumns() {
     overrides.value = {}
     order.value = []
+    widths.value = {}
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.removeItem(`codex-proxy:table-columns:${tableId}`)
+        localStorage.removeItem(`codex-proxy:table-column-order:${tableId}`)
+        localStorage.removeItem(`codex-proxy:table-column-widths:${tableId}`)
+        window.dispatchEvent(new CustomEvent(`codex-proxy:table-reset:${tableId}`))
+      }
+      catch {
+        // fallback
+      }
+    }
   }
 
-  return { visibleColumns, columnOptions, setColumnVisible, setColumnOrder, resetColumns }
+  function setColumnWidth(key: string, width: number) {
+    widths.value = { ...widths.value, [key]: width }
+  }
+
+  function resetColumnWidth(key: string) {
+    const next = { ...widths.value }
+    delete next[key]
+    widths.value = next
+  }
+
+  if (typeof window !== 'undefined') {
+    const onReset = () => { widths.value = {} }
+    const onUpdate = (e: Event) => {
+      widths.value = (e as CustomEvent).detail || {}
+    }
+    window.addEventListener(`codex-proxy:table-reset:${tableId}`, onReset)
+    window.addEventListener(`codex-proxy:table-widths-updated:${tableId}`, onUpdate)
+  }
+
+  return { visibleColumns, columnOptions, setColumnVisible, setColumnOrder, resetColumns, widths, setColumnWidth, resetColumnWidth }
 }
