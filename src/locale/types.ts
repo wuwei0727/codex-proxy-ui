@@ -12,6 +12,11 @@ export interface UiLocale {
     empty: string
     value: string
   }
+  markdown: {
+    copy: string
+    copied: string
+    copyFailed: string
+  }
   pagination: {
     total: (count: number) => string
     pageSize: (count: number) => string
