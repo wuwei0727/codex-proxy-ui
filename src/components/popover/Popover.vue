@@ -52,14 +52,14 @@ const attrs = useAttrs()
 
 const rootRef = ref<HTMLElement | null>(null)
 const popoverRef = ref<HTMLElement | null>(null)
-const { popoverStyle, popoverArrowStyle, arrowEdge, updatePopoverPosition } = usePopoverPosition(props, open, rootRef, popoverRef)
+const { popoverStyle, popoverArrowStyle, popoverPlacement, arrowEdge, updatePopoverPosition } = usePopoverPosition(props, open, rootRef, popoverRef)
 const hoverCloseTimer = shallowRef<number>()
 const hoverOpenTimer = shallowRef<number>()
 const leavingStyle = new WeakMap<HTMLElement, string>()
 const viewportTarget = computed(() => (open.value && typeof window !== 'undefined' ? window : null))
 
 const popoverClasses = computed(() => [
-  'fixed z-50 overflow-visible rounded-z-lg border-0 bg-z-bg-elevated font-sans text-left text-z leading-relaxed text-z-text shadow-z',
+  'fixed z-50 overflow-visible rounded-z-lg border-0 bg-z-bg-elevated font-sans text-left text-z leading-relaxed text-z-text shadow-z-popover',
   props.animatePosition
     ? 'transition-[left,top] duration-150 ease-out motion-reduce:transition-none'
     : undefined,
@@ -267,6 +267,7 @@ onBeforeUnmount(() => {
           ref="popoverRef"
           :role="role"
           data-z-overlay
+          :data-z-placement="popoverPlacement"
           :class="popoverClasses"
           :style="popoverStyle"
         >

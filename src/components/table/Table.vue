@@ -239,7 +239,6 @@ function sortButtonLabel(column: ResolvedTableColumn<Row>) {
                     type="button"
                     class="inline-flex max-w-full touch-manipulation items-center gap-1 border-0 bg-transparent p-0 text-inherit outline-none transition-colors hover:text-z-text focus-visible:text-z-primary-text motion-reduce:transition-none"
                     :aria-label="sortButtonLabel(column)"
-                    :title="sortButtonLabel(column)"
                     @click="toggleColumnSort(column)"
                   >
                     <span class="truncate">

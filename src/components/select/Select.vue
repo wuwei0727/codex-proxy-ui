@@ -49,6 +49,7 @@ const {
   activeIndex,
   popoverStyle,
   popoverMaxHeight,
+  popoverPlacement,
   selectedValues,
   selectedOptions,
   selectionLabel,
@@ -235,7 +236,8 @@ defineExpose({ focus: () => triggerRef.value?.focus(), blur: () => triggerRef.va
           v-if="open"
           ref="popoverRef"
           data-z-overlay
-          class="fixed z-50 rounded-z-lg border-0 bg-z-bg-elevated shadow-z"
+          :data-z-placement="popoverPlacement"
+          class="fixed z-50 rounded-z-lg border-0 bg-z-bg-elevated shadow-z-popover"
           :style="popoverStyle"
         >
           <div v-if="filterable" ref="searchRef" class="p-2">

@@ -29,6 +29,7 @@ export function useSelect<Multiple extends boolean, Value extends SelectOptionVa
   const {
     popoverStyle,
     popoverMaxHeight,
+    popoverPlacement,
     updatePopoverPosition,
   } = useSelectPosition(open, selectId, elements)
 
@@ -257,6 +258,7 @@ export function useSelect<Multiple extends boolean, Value extends SelectOptionVa
     activeIndex,
     popoverStyle,
     popoverMaxHeight,
+    popoverPlacement,
     selectedValues,
     selectedOptions,
     selectionLabel,

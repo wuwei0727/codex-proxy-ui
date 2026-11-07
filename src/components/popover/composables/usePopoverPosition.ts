@@ -106,7 +106,7 @@ export function usePopoverPosition(
   useEventListener(viewportTarget, 'scroll', updatePopoverPosition, { capture: true, passive: true })
   useResizeObserver([referenceElement, popoverRef], updatePopoverPosition)
 
-  return { popoverStyle, popoverArrowStyle, arrowEdge, updatePopoverPosition }
+  return { popoverStyle, popoverArrowStyle, popoverPlacement, arrowEdge, updatePopoverPosition }
 }
 
 function popoverArrowEdge(placement: PopoverPlacement): PopoverSide {

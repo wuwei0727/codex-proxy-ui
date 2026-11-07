@@ -163,6 +163,7 @@ function deriveDarkComponentMap(
     progressRemainingColor: mix(surfaces.colorBgContainer, surfaces.colorBorderSecondary, 0.92),
     layoutSiderBg: surfaces.colorBgContainer,
     cardShadow: scaleShadowAlpha(`0 18px 34px -26px ${withAlpha(BLACK, 0.64)}`, shadowStrength),
+    popoverShadow: scaleShadowAlpha(`0 1px 6px -1px ${withAlpha(BLACK, 0.30)}, 0 10px 22px -11px ${withAlpha(BLACK, 0.52)}`, shadowStrength),
     inputShadow: scaleShadowAlpha(`0 12px 24px -20px ${withAlpha(BLACK, 0.66)}`, shadowStrength),
     inputHoverShadow: inputInteractionShadow,
     inputActiveShadow: inputInteractionShadow,
@@ -210,6 +211,8 @@ function deriveLightComponentMap(
     progressRemainingColor: surfaces.colorBorderSecondary,
     layoutSiderBg: surfaces.colorBgContainer,
     cardShadow: scaleShadowAlpha(`0 10px 22px -18px ${withAlpha(LIGHT_SHADOW_BASE, 0.08)}`, shadowStrength),
+    // 面板与容器同色时，短阴影也能分开上沿和两侧。
+    popoverShadow: scaleShadowAlpha(`0 1px 6px -1px ${withAlpha(LIGHT_SHADOW_BASE, 0.09)}, 0 8px 20px -10px ${withAlpha(LIGHT_SHADOW_BASE, 0.08)}`, shadowStrength),
     layoutSiderShadow: scaleShadowAlpha(`2px 0 12px -12px ${withAlpha(LIGHT_SHADOW_BASE, 0.027)}`, shadowStrength),
     scrollbarThumbBg: mix(surfaces.colorBgLayout, surfaces.colorTextSecondary, 0.2),
     scrollbarThumbHoverBg: mix(surfaces.colorBgLayout, surfaces.colorTextSecondary, 0.34),
