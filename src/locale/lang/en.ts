@@ -3,20 +3,20 @@ import type { UiLocale } from '../types'
 const locale: UiLocale = {
   theme: {
     'relay-blue': {
-      label: 'Relay blue',
-      description: 'Clear accents on graphite surfaces',
+      label: 'Starlit passage',
+      description: 'A lone sail on a star-lit sea',
     },
     'deep-teal': {
-      label: 'Deep teal',
-      description: 'Cool copper tones on deep glass',
+      label: 'Ink-wash river',
+      description: 'A lone skiff beneath ink-wash hills',
     },
     'signal-violet': {
-      label: 'Heritage',
-      description: 'Warm ochre, rice paper, and ink',
+      label: 'Pink courtyard',
+      description: 'Pink walls, long bands of light',
     },
     'graphite': {
-      label: 'Graphite',
-      description: 'Pencil graphite and studio gray paper',
+      label: 'Vermilion court',
+      description: 'Golden eaves above vermilion columns',
     },
   },
   name: 'en',
@@ -43,7 +43,7 @@ const locale: UiLocale = {
     next: 'Next page',
   },
   select: {
-    placeholder: 'Select an option',
+    placeholder: 'Select',
     empty: 'No options',
     clear: 'Clear selection',
     search: 'Search options',
@@ -80,9 +80,9 @@ const locale: UiLocale = {
   },
   datePicker: {
     label: 'Choose a date',
-    placeholder: 'Select a date',
-    startPlaceholder: 'Start date',
-    endPlaceholder: 'End date',
+    placeholder: '',
+    startPlaceholder: '',
+    endPlaceholder: '',
     startLabel: label => `${label} · Start`,
     endLabel: label => `${label} · End`,
     clear: 'Clear date',

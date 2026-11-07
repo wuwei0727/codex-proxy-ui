@@ -2,6 +2,14 @@ export type ThemeMode = 'system' | 'light' | 'dark'
 export type ThemeScheme = 'light' | 'dark'
 export type ThemeColorPresetId = 'relay-blue' | 'deep-teal' | 'signal-violet' | 'graphite'
 export type ThemeColorId = ThemeColorPresetId | 'custom'
+export type ThemePresetId = 'default' | 'soft'
+
+export interface ThemePreset {
+  id: ThemePresetId
+  colorId: ThemeColorId
+  primaryColor: string
+  customization?: Partial<Record<ThemeScheme, ThemeCustomization>>
+}
 
 export interface ThemeColorPreset {
   id: ThemeColorPresetId
@@ -46,6 +54,7 @@ export interface ThemeCustomization {
 
 export interface ThemeOptions {
   scheme?: ThemeScheme
+  preset?: ThemePresetId
   colorId?: ThemeColorId
   /** 自定义配色的主色，仅在 colorId 为 custom 时使用 */
   primaryColor?: string
@@ -71,6 +80,7 @@ export interface ThemeSeedTokens {
 
 export interface Theme {
   scheme: ThemeScheme
+  preset: ThemePresetId
   colorId: ThemeColorId
   seed: string
   seedTokens: ThemeSeedTokens
@@ -193,6 +203,8 @@ export interface ThemeFillMap {
 
 export interface ThemeComponentMap {
   menuItemSelectedBg: string
+  menuItemSelectedBgImage: string
+  menuItemSelectedShadow: string
   inputBg: string
   inputHoverBg: string
   inputActiveBg: string
@@ -209,6 +221,7 @@ export interface ThemeComponentMap {
   iconButtonSecondaryActiveBg: string
   brandMarkBg: string
   cardBg: string
+  cardBgImage: string
   modalBg: string
   popoverHeaderBg: string
   tableHeaderBg: string
@@ -219,6 +232,7 @@ export interface ThemeComponentMap {
   tableRowSelectedHoverBg: string
   progressRemainingColor: string
   layoutSiderBg: string
+  layoutSiderBgImage: string
   cardShadow: string
   popoverShadow: string
   inputShadow: string
@@ -301,6 +315,7 @@ export interface ThemeDimensionMap {
   borderRadius: string
   borderRadiusLg: string
   cardBorderRadius: string
+  layoutSiderBorderRadius: string
 }
 
 export interface ThemeMap {

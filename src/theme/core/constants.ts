@@ -3,7 +3,9 @@ import type {
   ThemeColorPresetId,
   ThemeCustomization,
   ThemeMode,
+  ThemePreset,
   ThemePresetColorName,
+  ThemePresetId,
   ThemeTokenName,
 } from '../types'
 import { presetPrimaryColors } from '@ant-design/colors'
@@ -13,6 +15,25 @@ export const defaultThemeMode: ThemeMode = 'system'
 export const defaultThemeColorId: ThemeColorPresetId = 'relay-blue'
 export const defaultThemePrimaryColor = '#5983F4'
 export const defaultThemeCustomization: ThemeCustomization = {}
+export const defaultThemePresetId: ThemePresetId = 'default'
+
+const softDimensions = {
+  seed: { borderRadius: 13 },
+  component: { cardBorderRadius: 24 },
+}
+
+export const themePresets: readonly ThemePreset[] = [
+  { id: 'default', colorId: defaultThemeColorId, primaryColor: defaultThemePrimaryColor },
+  {
+    id: 'soft',
+    colorId: defaultThemeColorId,
+    primaryColor: defaultThemePrimaryColor,
+    customization: {
+      light: softDimensions,
+      dark: softDimensions,
+    },
+  },
+]
 
 export const DEFAULT_SEED_COLORS = {
   colorSuccess: '#12B981',
@@ -50,49 +71,75 @@ export const themeColorPresets: readonly ThemeColorPreset[] = [
   {
     id: 'deep-teal',
     ...en.theme['deep-teal'],
-    seed: '#0E7C72',
+    seed: '#50605E',
     appearance: {
       light: {
-        colorBgBase: '#FBFEFD',
-        colorTextBase: '#122C2A',
+        colorBgBase: '#F8F8F3',
+        colorTextBase: '#282D2C',
       },
       dark: {
-        colorBgBase: '#102321',
-        colorTextBase: '#D7EAE6',
+        colorBgBase: '#202727',
+        colorTextBase: '#E4E7DF',
       },
     },
   },
   {
     id: 'signal-violet',
     ...en.theme['signal-violet'],
-    seed: '#A0583D',
+    seed: '#D395A8',
     appearance: {
       light: {
-        colorBgBase: '#F9F3E8',
-        colorTextBase: '#2B211B',
+        colorBgBase: '#FCF6F7',
+        colorTextBase: '#3A2E36',
       },
       dark: {
-        colorBgBase: '#1E1713',
-        colorTextBase: '#EEE3D3',
+        colorBgBase: '#29242A',
+        colorTextBase: '#F1E6E9',
       },
     },
   },
   {
     id: 'graphite',
     ...en.theme.graphite,
-    seed: '#525B66',
+    seed: '#A34537',
     appearance: {
       light: {
-        colorBgBase: '#FAF9F6',
-        colorTextBase: '#25272B',
+        colorBgBase: '#FBF5E8',
+        colorTextBase: '#3D302A',
       },
       dark: {
-        colorBgBase: '#1B1C1E',
-        colorTextBase: '#E5E1D9',
+        colorBgBase: '#302421',
+        colorTextBase: '#F0E3CD',
       },
     },
   },
 ] as const
+
+/** 完整主题按配色标识索引，配置可直接交给同一编译器或复制为编辑草稿 */
+export const themeProfiles: Readonly<Record<ThemeColorPresetId, { preset: ThemePresetId, customization: ThemeCustomization }>> = {
+  'relay-blue': { preset: 'default', customization: {} },
+  'deep-teal': {
+    preset: 'default',
+    customization: {
+      seed: { colorInfo: '#5F7782', colorSuccess: '#50785C', colorWarning: '#A67A40', controlHeight: 36, borderRadius: 4, shadowStrength: 55 },
+      component: { cardBorderRadius: 6, tableRowHeight: 60 },
+    },
+  },
+  'signal-violet': {
+    preset: 'default',
+    customization: {
+      seed: { colorInfo: '#82719A', colorSuccess: '#458365', colorWarning: '#B78032', fontSize: 14, controlHeight: 42, borderRadius: 5 },
+      component: { cardBorderRadius: 8, tableRowHeight: 68 },
+    },
+  },
+  'graphite': {
+    preset: 'soft',
+    customization: {
+      seed: { colorInfo: '#466D76', colorSuccess: '#537854', colorWarning: '#BD8C3F', controlHeight: 38, borderRadius: 6, shadowStrength: 80 },
+      component: { cardBorderRadius: 12, tableRowHeight: 54 },
+    },
+  },
+}
 
 export const BLACK = '#000000'
 export const WHITE = '#FFFFFF'

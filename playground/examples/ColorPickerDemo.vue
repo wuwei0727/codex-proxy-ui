@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { ZCheckbox, ZColorPicker } from '@codex-proxy/ui'
+import { themeColorPresets } from '@codex-proxy/ui/theme'
 import { shallowRef } from 'vue'
 import DemoPlayground from '../.vitepress/theme/DemoPlayground.vue'
 
 const color = shallowRef('#5983F4')
 const translucent = shallowRef('#5983F480')
 const disabled = shallowRef(false)
-const presets = ['#5983F4', '#0E7C72', '#A0583D', '#525B66']
+const presets = themeColorPresets.map(preset => preset.seed)
 </script>
 
 <template>
