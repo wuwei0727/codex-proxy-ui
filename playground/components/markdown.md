@@ -67,6 +67,8 @@ const source = '> [!IMPORTANT]\n> 修改共享配置会影响后续请求，保�
 
 通过 `source` 传入文本，不把未经处理的 HTML 直接注入页面
 
+代码块可横向滚动，右上角的按钮可复制整段代码
+
 ## Markdown API {#api}
 
 ### 属性

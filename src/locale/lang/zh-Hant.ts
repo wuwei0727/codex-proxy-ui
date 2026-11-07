@@ -29,6 +29,11 @@ const locale: UiLocale = {
     empty: '暫無數據',
     value: '數值',
   },
+  markdown: {
+    copy: '複製程式碼',
+    copied: '已複製',
+    copyFailed: '複製失敗',
+  },
   pagination: {
     total: count => `共 ${count} 條`,
     pageSize: count => `${count} 條/頁`,

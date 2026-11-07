@@ -13,6 +13,7 @@ export function useSelectPosition(open: Ref<boolean>, selectId: string, elements
   const { controlRef, searchRef, listboxRef } = elements
   const popoverStyle = shallowRef<CSSProperties>({})
   const popoverMaxHeight = ref('244px')
+  const popoverPlacement = ref<'top' | 'bottom'>('bottom')
 
   function updatePopoverPosition() {
     if (!open.value || !controlRef.value || !listboxRef.value)
@@ -34,6 +35,7 @@ export function useSelectPosition(open: Ref<boolean>, selectId: string, elements
 
     // 原生锚点由浏览器随滚动合成，避免 body 浮层等待主线程坐标更新。
     const nativeAnchor = CSS.supports('top', 'anchor(bottom)')
+    popoverPlacement.value = placeAbove ? 'top' : 'bottom'
     popoverMaxHeight.value = `${Math.max(0, maxHeight - searchHeight)}px`
     popoverStyle.value = {
       positionAnchor: nativeAnchor ? `--${selectId}` : undefined,
@@ -53,5 +55,5 @@ export function useSelectPosition(open: Ref<boolean>, selectId: string, elements
   useEventListener(viewportTarget, 'scroll', updatePopoverPosition, { capture: true, passive: true })
   useResizeObserver([controlRef, listboxRef, searchRef], updatePopoverPosition)
 
-  return { popoverStyle, popoverMaxHeight, updatePopoverPosition }
+  return { popoverStyle, popoverMaxHeight, popoverPlacement, updatePopoverPosition }
 }

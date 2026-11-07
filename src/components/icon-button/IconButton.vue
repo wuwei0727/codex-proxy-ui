@@ -69,7 +69,6 @@ const classes = computed(() => [
     :aria-label="ariaLabel"
     :aria-pressed="pressed || undefined"
     :aria-busy="loading || undefined"
-    :title="ariaLabel"
     @click="emit('click', $event)"
   >
     <span

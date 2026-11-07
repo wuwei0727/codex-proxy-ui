@@ -29,6 +29,11 @@ const locale: UiLocale = {
     empty: 'No data',
     value: 'Value',
   },
+  markdown: {
+    copy: 'Copy code',
+    copied: 'Copied',
+    copyFailed: 'Copy failed',
+  },
   pagination: {
     total: count => `${count} ${count === 1 ? 'item' : 'items'}`,
     pageSize: count => `${count} / page`,

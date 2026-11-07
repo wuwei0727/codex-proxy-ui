@@ -40,21 +40,23 @@ const count = ref(0)
 
 ## 用法说明
 
-使用 `aria-label` 提供可访问名称。内置加载图标与未指定尺寸的 Lucide 图标随 `size` 缩放，自定义 SVG 的尺寸由调用方设置
+使用 `aria-label` 提供可访问名称，组件不会据此生成原生提示。需要可见说明时组合 `ZPopover`；原生提示可通过 `title` 显式传入
+
+内置加载图标与未指定尺寸的 Lucide 图标随 `size` 缩放，自定义 SVG 的尺寸由调用方设置
 
 ## IconButton API {#api}
 
 ### 属性
 
-| 属性                 | 说明                     | 类型                                                                     | 默认值      |
-| -------------------- | ------------------------ | ------------------------------------------------------------------------ | ----------- |
-| `aria-label`         | 提供可访问名称与悬停提示 | `string`                                                                 | —           |
-| `type`               | 语义类型                 | `'default' \| 'primary' \| 'success' \| 'info' \| 'warning' \| 'danger'` | `'default'` |
-| `variant`            | 外观                     | `'solid' \| 'plain' \| 'text' \| 'link'`                                 | `'text'`    |
-| `size`               | 组件尺寸                 | `'small' \| 'default' \| 'large'`                                        | `'default'` |
-| `native-type`        | 原生按钮行为             | `'button' \| 'submit' \| 'reset'`                                        | `'button'`  |
-| `loading / disabled` | 加载与禁用均阻止点击     | `boolean`                                                                | `false`     |
-| `pressed`            | 切换动作的按下状态       | `boolean`                                                                | `false`     |
+| 属性                 | 说明                 | 类型                                                                     | 默认值      |
+| -------------------- | -------------------- | ------------------------------------------------------------------------ | ----------- |
+| `aria-label`         | 提供可访问名称       | `string`                                                                 | —           |
+| `type`               | 语义类型             | `'default' \| 'primary' \| 'success' \| 'info' \| 'warning' \| 'danger'` | `'default'` |
+| `variant`            | 外观                 | `'solid' \| 'plain' \| 'text' \| 'link'`                                 | `'text'`    |
+| `size`               | 组件尺寸             | `'small' \| 'default' \| 'large'`                                        | `'default'` |
+| `native-type`        | 原生按钮行为         | `'button' \| 'submit' \| 'reset'`                                        | `'button'`  |
+| `loading / disabled` | 加载与禁用均阻止点击 | `boolean`                                                                | `false`     |
+| `pressed`            | 切换动作的按下状态   | `boolean`                                                                | `false`     |
 
 ### 事件
 

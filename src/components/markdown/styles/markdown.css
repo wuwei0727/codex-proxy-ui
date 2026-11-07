@@ -1,3 +1,5 @@
+@reference '../../../styles/base.css';
+
 .markdown-body {
   color: var(--z-color-text);
   font-family: var(--font-sans);
@@ -82,6 +84,8 @@
 }
 
 .markdown-body pre {
+  @apply z-scrollbar-hidden;
+
   margin: 8px 0;
   overflow-x: auto;
   border-radius: var(--z-border-radius);
@@ -92,6 +96,24 @@
 .markdown-body pre code {
   background: transparent;
   padding: 0;
+}
+
+.markdown-body .markdown-code-block {
+  --copy-inset: 4px;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  margin: 8px 0;
+  border-radius: var(--z-border-radius);
+  background: var(--z-color-bg-container);
+  padding-block: var(--copy-inset);
+  padding-inline-end: var(--copy-inset);
+}
+
+.markdown-code-block > pre {
+  margin: 0;
+  padding-block: calc(8px - var(--copy-inset));
 }
 
 .markdown-body blockquote {

@@ -56,14 +56,14 @@ watch([activeIndex, () => props.options, rootRef], updateIndicator, { flush: 'po
 useResizeObserver(() => [rootRef.value, ...(optionRefs.value ?? [])], updateIndicator)
 
 const rootClasses: Record<ComponentSize, string> = {
-  small: 'h-z-control-sm',
-  default: 'h-z-control',
-  large: 'h-z-control-lg',
+  small: 'h-z-control-sm min-h-z-control-sm',
+  default: 'h-z-control min-h-z-control',
+  large: 'h-z-control-lg min-h-z-control-lg',
 }
 const optionClasses: Record<ComponentSize, string> = {
-  small: 'h-6.5 px-2 text-z-xs',
-  default: 'h-8 px-3 text-xs',
-  large: 'h-9.5 px-4 text-z',
+  small: 'px-2 text-z-xs',
+  default: 'px-3 text-xs',
+  large: 'px-4 text-z',
 }
 
 function enabledIndexes() {
@@ -113,7 +113,7 @@ async function handleKeydown(event: KeyboardEvent, index: number) {
     :id="controlId"
     ref="root"
     tabindex="-1"
-    class="relative inline-grid min-w-0 max-w-full items-center overflow-x-auto rounded-z bg-(--z-input-bg) p-0.75 scrollbar-none [&::-webkit-scrollbar]:hidden [&::-webkit-scrollbar]:size-0"
+    class="relative inline-grid min-w-0 max-w-full items-stretch overflow-x-auto rounded-z bg-(--z-input-bg) p-0.75 scrollbar-none [&::-webkit-scrollbar]:hidden [&::-webkit-scrollbar]:size-0"
     :class="rootClasses[size]"
     :style="gridStyle"
     role="radiogroup"
@@ -144,7 +144,6 @@ async function handleKeydown(event: KeyboardEvent, index: number) {
       role="radio"
       :aria-checked="model === option.value"
       :aria-label="display === 'icon' ? option.label : undefined"
-      :title="display === 'icon' ? option.label : undefined"
       :tabindex="model === option.value || (activeIndex < 0 && index === 0) ? 0 : -1"
       :disabled="disabled || option.disabled"
       @click="selectOption(index)"

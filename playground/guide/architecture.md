@@ -71,7 +71,7 @@ DOM 指令由对应实体拥有，例如 loading/ 的 directive.ts 与 types.ts�
 
 - 属性使用 camelCase，模板使用 kebab-case；事件声明遵循 Vue 的 camelCase，模板监听使用 kebab-case
 - 值使用默认或具名 v-model；用户事件表达意图，程序更新不伪造用户操作
-- label 表示可见文本，隐藏名称使用 aria-label；原生属性传给实际控件，class/style 放在文档约定的根节点
+- label 表示可见文本，隐藏名称使用 aria-label，可访问名称不自动生成 title 提示；原生属性传给实际控件，class/style 放在文档约定的根节点
 - 按钮分别用 type、variant、native-type 表达语义、外观、原生行为
 - 表单执行调用方规则；数据请求、业务草稿和保存生命周期由应用拥有
 - 表格不排序业务数据，分页不请求数据，远程选择器只通知查询词，通知容器不公开可变消息列表
