@@ -149,7 +149,7 @@ provide(formFieldKey, {
       </p>
       <slot />
       <Transition name="z-zoom-in-top">
-        <p v-if="showError" :id="errorId" :title="validateMessage" class="absolute top-full left-0 mt-1.25 mb-0 w-full truncate text-xs leading-none font-normal text-z-error-text" aria-live="polite">
+        <p v-if="showError" :id="errorId" :title="validateMessage" class="mt-1.5 mb-0 text-xs leading-normal font-normal text-z-error-text" aria-live="polite">
           {{ validateMessage }}
         </p>
       </Transition>

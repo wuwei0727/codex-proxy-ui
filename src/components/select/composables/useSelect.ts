@@ -33,7 +33,7 @@ export function useSelect<Multiple extends boolean, Value extends SelectOptionVa
     updatePopoverPosition,
   } = useSelectPosition(open, selectId, elements)
 
-  const selectedValues = computed<Value[]>(() => Array.isArray(model.value) ? model.value as Value[] : model.value === undefined ? [] : [model.value as Value])
+  const selectedValues = computed<Value[]>(() => Array.isArray(model.value) ? model.value as Value[] : (model.value === undefined || model.value === '') ? [] : [model.value as Value])
   const selectedOptions = computed(() => selectedValues.value.map(value => props.options.find(option => option.value === value) ?? { value, label: String(value) }))
   const locale = useLocale()
   const selectionLabel = computed(() => new Intl.ListFormat(locale.value.name).format(selectedOptions.value.map(option => option.label)))
