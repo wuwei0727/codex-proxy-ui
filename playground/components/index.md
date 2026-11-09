@@ -19,6 +19,7 @@
 | ------------------------------- | ------------------------ |
 | [ZCard](./card.md)              | 内容分组与卡片容器       |
 | [ZPageHeader](./page-header.md) | 页面标题、副标题与操作区 |
+| [ZSidebar](./sidebar.md)        | 可折叠侧栏与两级导航     |
 | [ZSegmented](./segmented.md)    | 同一内容区域的视图切换   |
 | [ZMenuItem](./menu-item.md)     | 菜单操作、禁用与危险状态 |
 | [ZScrollbar](./scrollbar.md)    | 统一外观的横向与纵向滚动 |

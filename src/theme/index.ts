@@ -11,17 +11,22 @@ export const themeTokenNames = Object.freeze(
 export {
   defaultThemeColorId,
   defaultThemeMode,
+  defaultThemePresetId,
   defaultThemePrimaryColor,
   themeColorPresets,
+  themePresets,
+  themeProfiles,
 } from './core/constants'
 export {
   isThemeColorId,
   isThemeMode,
+  isThemePresetId,
   normalizeThemeCustomization,
   supportsThemeTokenAlpha,
 } from './core/normalize'
 export {
   createTheme,
+  createThemeSeedTokens,
   resolveThemeScheme,
 } from './core/resolve'
 export { createThemeVars, getThemeVarName, themePrefix } from './namespace'
@@ -36,6 +41,8 @@ export type {
   ThemeCustomization,
   ThemeMode,
   ThemeOptions,
+  ThemePreset,
+  ThemePresetId,
   ThemeScheme,
   ThemeSeedOverrides,
   ThemeSeedTokens,

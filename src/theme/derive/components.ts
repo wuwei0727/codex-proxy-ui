@@ -4,6 +4,7 @@ import type {
   ThemeComponentOverrides,
   ThemeDimensionMap,
   ThemeFillMap,
+  ThemePresetId,
   ThemePrimaryMap,
   ThemeScheme,
   ThemeSeedTokens,
@@ -21,6 +22,7 @@ import {
   BLACK,
   DEFAULT_DIMENSIONS,
   LIGHT_SHADOW_BASE,
+  WHITE,
 } from '../core/constants'
 
 type SurfaceComponentMap = Omit<ThemeComponentMap, `buttonPrimary${string}` | `switchUnchecked${string}` | 'tableRowSelectedHoverBg'>
@@ -69,6 +71,7 @@ export function deriveThemeDimensionMap(
     borderRadius: `${borderRadius}px`,
     borderRadiusLg: `${borderRadius + seedTokens.sizeStep}px`,
     cardBorderRadius: `${cardBorderRadius}px`,
+    layoutSiderBorderRadius: '0px',
   }
 }
 
@@ -101,6 +104,7 @@ export function deriveThemeComponentMap(
   primary: ThemePrimaryMap,
   error: FunctionalColorMap,
   shadowStrength: number,
+  preset: ThemePresetId,
 ): ThemeComponentMap {
   // 明暗模式共用组件合同，各自保留适合宿主表面的填充配方。
   const components = fills
@@ -111,6 +115,7 @@ export function deriveThemeComponentMap(
   const switchUncheckedBg = surfaces.colorBorder
   return {
     ...components,
+    ...(preset === 'soft' ? deriveSoftSurfaceMap(surfaces, shadowStrength, fills === null) : {}),
     switchUncheckedBg,
     switchUncheckedColor: ensureContrast(surfaces.colorTextSecondary, switchUncheckedBg, 4.5),
     // 暗色选中行只轻微提亮，保留原有蓝灰色温和选中语义。
@@ -147,12 +152,15 @@ function deriveDarkComponentMap(
     iconButtonSecondaryHoverBg: surfaces.colorBgTextHover,
     iconButtonSecondaryActiveBg: surfaces.colorBgTextActive,
     menuItemSelectedBg: surfaces.colorBgTextHover,
+    menuItemSelectedBgImage: 'none',
+    menuItemSelectedShadow: 'none',
     inputBg: mix(surfaces.colorBgContainer, surfaces.colorFillSecondary, 0.375),
     inputHoverBg: inputInteractionBg,
     inputActiveBg: inputInteractionBg,
     inputErrorActiveBg: error.container,
     brandMarkBg: surfaces.colorBgElevated,
     cardBg: surfaces.colorBgContainer,
+    cardBgImage: 'none',
     modalBg: surfaces.colorBgContainer,
     popoverHeaderBg: surfaces.colorFillTertiary,
     tableHeaderBg: surfaces.colorFillTertiary,
@@ -162,6 +170,7 @@ function deriveDarkComponentMap(
     tableRowSelectedBg: primary.colorPrimaryContainer,
     progressRemainingColor: mix(surfaces.colorBgContainer, surfaces.colorBorderSecondary, 0.92),
     layoutSiderBg: surfaces.colorBgContainer,
+    layoutSiderBgImage: 'none',
     cardShadow: scaleShadowAlpha(`0 18px 34px -26px ${withAlpha(BLACK, 0.64)}`, shadowStrength),
     popoverShadow: scaleShadowAlpha(`0 1px 6px -1px ${withAlpha(BLACK, 0.30)}, 0 10px 22px -11px ${withAlpha(BLACK, 0.52)}`, shadowStrength),
     inputShadow: scaleShadowAlpha(`0 12px 24px -20px ${withAlpha(BLACK, 0.66)}`, shadowStrength),
@@ -204,17 +213,51 @@ function deriveLightComponentMap(
     tableRowHoverBg: compositeOnBackground(fills.contentHoverBg, surfaces.colorBgContainer),
     tableRowSelectedBg: primary.colorPrimaryContainer,
     menuItemSelectedBg: surfaces.colorBgTextActive,
+    menuItemSelectedBgImage: 'none',
+    menuItemSelectedShadow: 'none',
     brandMarkBg: surfaces.colorBgSpotlight,
     cardBg: surfaces.colorBgContainer,
+    cardBgImage: 'none',
     modalBg: surfaces.colorBgContainer,
     popoverHeaderBg: surfaces.colorFillSecondary,
     progressRemainingColor: surfaces.colorBorderSecondary,
     layoutSiderBg: surfaces.colorBgContainer,
+    layoutSiderBgImage: 'none',
     cardShadow: scaleShadowAlpha(`0 10px 22px -18px ${withAlpha(LIGHT_SHADOW_BASE, 0.08)}`, shadowStrength),
     // 面板与容器同色时，短阴影也能分开上沿和两侧。
     popoverShadow: scaleShadowAlpha(`0 1px 6px -1px ${withAlpha(LIGHT_SHADOW_BASE, 0.09)}, 0 8px 20px -10px ${withAlpha(LIGHT_SHADOW_BASE, 0.08)}`, shadowStrength),
     layoutSiderShadow: scaleShadowAlpha(`2px 0 12px -12px ${withAlpha(LIGHT_SHADOW_BASE, 0.027)}`, shadowStrength),
     scrollbarThumbBg: mix(surfaces.colorBgLayout, surfaces.colorTextSecondary, 0.2),
     scrollbarThumbHoverBg: mix(surfaces.colorBgLayout, surfaces.colorTextSecondary, 0.34),
+  }
+}
+
+function deriveSoftSurfaceMap(
+  surfaces: ThemeSurfaceMap,
+  shadowStrength: number,
+  dark: boolean,
+): Partial<SurfaceComponentMap> {
+  const highlight = dark
+    ? mix(surfaces.colorBgContainer, surfaces.colorBgElevated, 0.4)
+    : mix(surfaces.colorBgContainer, WHITE, 0.12)
+  const surfaceBgImage = dark
+    ? `linear-gradient(145deg, ${highlight}, transparent 75%)`
+    : `linear-gradient(145deg, ${highlight}, transparent)`
+  return {
+    cardBgImage: surfaceBgImage,
+    // 暗色通过大范围低对比的明暗过渡表现体积，避免亮边形成金属倒角
+    cardShadow: scaleShadowAlpha(dark
+      ? `inset 0 3px 10px ${withAlpha(WHITE, 0.035)}, inset 0 -2px 8px ${withAlpha(BLACK, 0.14)}, -3px -3px 12px -4px ${withAlpha(WHITE, 0.018)}, 0 8px 18px -12px ${withAlpha(BLACK, 0.42)}`
+      : `inset 0 2px 1px ${withAlpha(highlight, 0.92)}, inset 0 -2px 3px ${withAlpha(LIGHT_SHADOW_BASE, 0.055)}, 0 3px 5px -3px ${withAlpha(LIGHT_SHADOW_BASE, 0.16)}, 0 16px 28px -20px ${withAlpha(LIGHT_SHADOW_BASE, 0.28)}`, shadowStrength),
+    layoutSiderBgImage: dark
+      ? surfaceBgImage
+      : `linear-gradient(270deg, ${withAlpha(LIGHT_SHADOW_BASE, 0.018)}, ${withAlpha(highlight, 0.65)} 3px, transparent 10px), linear-gradient(160deg, ${highlight}, transparent)`,
+    layoutSiderShadow: scaleShadowAlpha(dark
+      ? `inset 0 3px 10px ${withAlpha(WHITE, 0.025)}, inset -2px 0 8px ${withAlpha(BLACK, 0.12)}, 4px 0 16px -12px ${withAlpha(BLACK, 0.42)}`
+      : `inset -3px 0 5px -4px ${withAlpha(highlight, 0.8)}, 1px 0 6px -4px ${withAlpha(LIGHT_SHADOW_BASE, 0.06)}, 4px 0 12px -8px ${withAlpha(LIGHT_SHADOW_BASE, 0.08)}`, shadowStrength),
+    menuItemSelectedBgImage: `linear-gradient(145deg, ${dark ? surfaces.colorBgElevated : withAlpha(highlight, 0.12)}, transparent)`,
+    menuItemSelectedShadow: scaleShadowAlpha(dark
+      ? `inset 0 2px 6px ${withAlpha(WHITE, 0.035)}, inset 0 -1px 4px ${withAlpha(BLACK, 0.12)}, 0 3px 8px -5px ${withAlpha(BLACK, 0.35)}`
+      : `inset 0 2px 1px ${withAlpha(highlight, 0.9)}, inset 0 -1px 1px ${withAlpha(LIGHT_SHADOW_BASE, 0.07)}, 0 3px 6px -4px ${withAlpha(LIGHT_SHADOW_BASE, 0.3)}`, shadowStrength),
   }
 }

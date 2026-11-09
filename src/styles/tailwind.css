@@ -206,6 +206,7 @@
   --shadow-z-secondary: var(--z-box-shadow-secondary);
   --shadow-z-tertiary: var(--z-box-shadow-tertiary);
   --shadow-z-card: var(--z-card-shadow);
+  --shadow-z-menu-item-selected: var(--z-menu-item-selected-shadow);
   --shadow-z-popover: var(--z-popover-shadow);
   --shadow-z-input: var(--z-input-shadow);
   --shadow-z-input-hover: var(--z-input-hover-shadow);

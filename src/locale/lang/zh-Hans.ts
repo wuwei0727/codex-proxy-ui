@@ -3,20 +3,20 @@ import type { UiLocale } from '../types'
 const locale: UiLocale = {
   theme: {
     'relay-blue': {
-      label: '中继蓝',
-      description: '石墨表面上的清晰交互信号',
+      label: '星津夜航',
+      description: '星垂海面，帆过深蓝',
     },
     'deep-teal': {
-      label: '深海青',
-      description: '氧化铜落入深水玻璃的冷静层次',
+      label: '水墨江汀',
+      description: '远山淡墨，一叶横舟',
     },
     'signal-violet': {
-      label: '古风色',
-      description: '赭石落在宣纸与松烟墨上的温厚层次',
+      label: '粉墙回廊',
+      description: '粉墙留光，长廊留白',
     },
     'graphite': {
-      label: '石墨',
-      description: '铅笔粉末与工作室灰纸的材料质感',
+      label: '朱阙金瓦',
+      description: '金瓦出檐，朱柱映阶',
     },
   },
   name: 'zh-Hans',
@@ -80,9 +80,9 @@ const locale: UiLocale = {
   },
   datePicker: {
     label: '选择日期',
-    placeholder: '请选择日期',
-    startPlaceholder: '开始日期',
-    endPlaceholder: '结束日期',
+    placeholder: '',
+    startPlaceholder: '',
+    endPlaceholder: '',
     startLabel: label => `${label} · 开始`,
     endLabel: label => `${label} · 结束`,
     clear: '清空日期',

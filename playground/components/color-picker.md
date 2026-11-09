@@ -19,10 +19,11 @@ import ColorPickerDemo from '../examples/ColorPickerDemo.vue'
 ```vue
 <script setup lang="ts">
 import { ZColorPicker } from '@codex-proxy/ui'
+import { themeColorPresets } from '@codex-proxy/ui/theme'
 import { ref } from 'vue'
 
 const color = ref('#5983F4')
-const presets = ['#5983F4', '#0E7C72', '#A0583D']
+const presets = themeColorPresets.map(preset => preset.seed)
 </script>
 
 <template>

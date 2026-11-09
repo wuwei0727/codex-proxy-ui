@@ -41,12 +41,17 @@ JavaScript 中使用 `getThemeVarName('color-primary')` 获取当前前缀下的
 
 ## 配色与密度
 
-`createTheme(options?)` 接收 `ThemeOptions`：`scheme` 选择明暗，`colorId` 选择预置配色，使用 `'custom'` 时通过 `primaryColor` 传入主色 HEX。`customization` 调整 Seed、组件尺寸或允许覆盖的 Token
+`createTheme(options?)` 接收 `ThemeOptions`：`preset` 选择表面材质，缺省为 `default`；`scheme` 选择明暗，`colorId` 选择品牌配色，使用 `'custom'` 时通过 `primaryColor` 传入主色 HEX。省略品牌配置时使用材质的推荐配色，`customization` 调整 Seed、组件尺寸或允许覆盖的 Token
+
+完整主题使用 `createTheme({ colorId, ...themeProfiles[colorId], scheme })`，其中 `colorId` 为预设配色 ID。`themeProfiles` 提供推荐材质和全局、组件配置；传入不同的 `preset` 可单独切换材质
+
+`default` 保留简洁表面，`soft` 提供表面高光、渐变与分层阴影，背景和文字基线均跟随品牌配色。材质不改变圆角、字号或组件尺寸，这些值由 Seed 与组件配置决定。Card 等基础组件自动消费对应 Token，无需业务页面判断主题
 
 ```ts
 import { createTheme } from '@codex-proxy/ui/theme'
 
 const theme = createTheme({
+  preset: 'soft',
   scheme: 'light',
   colorId: 'custom',
   primaryColor: '#0E7C72',
@@ -59,7 +64,7 @@ const theme = createTheme({
 
 输入经统一规范化：无效的 Seed 颜色覆盖被忽略，自定义主色无效时回退默认色，尺寸限制在允许范围内；`tokenOverrides` 只接受开放的组件字段，不能覆盖任意 CSS 变量。优先调整 Seed 以保留状态之间的派生关系
 
-返回值 `Theme` 包含 `scheme`、`colorId`、主色 `seed`、规范化的 `seedTokens` 和完整 `tokens`；预览和编辑器从同一结果读取派生值
+返回值 `Theme` 包含 `preset`、`scheme`、`colorId`、主色 `seed`、规范化的 `seedTokens` 和完整 `tokens`；预览和编辑器从同一结果读取派生值
 
 ## 局部主题
 
@@ -92,16 +97,17 @@ const theme = createTheme({ scheme: 'dark', colorId: 'deep-teal' })
 
 ## 公开 API
 
-| 导出                                                                  | 用途                                             |
-| --------------------------------------------------------------------- | ------------------------------------------------ |
-| `createTheme(options?)`                                               | 生成独立的 `Theme`，省略配置时使用浅色与默认配色 |
-| `applyTheme(root, theme)`                                             | 将主题应用到文档根元素                           |
-| `resolveThemeScheme(mode, prefersDark)`                               | 将系统跟随模式解析为明暗方案                     |
-| `createThemeVars(tokens)`、`getThemeVarName(name)`                    | 生成当前构建前缀下的 CSS 变量                    |
-| `isThemeMode(value)`、`isThemeColorId(value)`                         | 校验外部或持久化配置中的枚举值                   |
-| `normalizeThemeCustomization(value)`                                  | 规范化持久化的主题覆盖配置                       |
-| `supportsThemeTokenAlpha(name)`                                       | 判断指定 Token 是否允许透明填充                  |
-| `defaultThemeMode`、`defaultThemeColorId`、`defaultThemePrimaryColor` | 应用初始化和重置可复用的默认值                   |
-| `themeColorPresets`、`themeTokenNames`、`themePrefix`                 | 预置配色、语义 Token 名和当前 CSS 变量前缀       |
+| 导出                                                                                          | 用途                                                 |
+| --------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| `createThemeSeedTokens(options?)`                                                             | 仅解析 Seed，适用于品牌色卡等无需完整主题的预览      |
+| `createTheme(options?)`                                                                       | 生成独立的 `Theme`，省略配置时使用浅色与默认配色     |
+| `applyTheme(root, theme)`                                                                     | 将主题应用到文档根元素                               |
+| `resolveThemeScheme(mode, prefersDark)`                                                       | 将系统跟随模式解析为明暗方案                         |
+| `createThemeVars(tokens)`、`getThemeVarName(name)`                                            | 生成当前构建前缀下的 CSS 变量                        |
+| `isThemeMode(value)`、`isThemePresetId(value)`、`isThemeColorId(value)`                       | 校验外部或持久化配置中的枚举值                       |
+| `normalizeThemeCustomization(value)`                                                          | 规范化持久化的主题覆盖配置                           |
+| `supportsThemeTokenAlpha(name)`                                                               | 判断指定 Token 是否允许透明填充                      |
+| `defaultThemeMode`、`defaultThemePresetId`、`defaultThemeColorId`、`defaultThemePrimaryColor` | 应用初始化和重置可复用的默认值                       |
+| `themePresets`、`themeColorPresets`、`themeTokenNames`、`themePrefix`                         | 表面材质预设、品牌配色、语义 Token 名和 CSS 变量前缀 |
 
 内部颜色派生步骤不作为公开 API；类型、参数与返回值以该版本的 TypeScript 声明为准

@@ -36,6 +36,7 @@ export default defineConfig({
         { text: '布局与导航', collapsed: false, items: [
           { text: 'Card 卡片', link: '/components/card' },
           { text: 'PageHeader 页头', link: '/components/page-header' },
+          { text: 'Sidebar 侧边栏', link: '/components/sidebar' },
           { text: 'Segmented 分段选择', link: '/components/segmented' },
           { text: 'MenuItem 菜单项', link: '/components/menu-item' },
           { text: 'Scrollbar 滚动容器', link: '/components/scrollbar' },

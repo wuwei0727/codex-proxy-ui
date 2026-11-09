@@ -4,8 +4,6 @@
 
 ## 目录归属
 
-参考 [Element Plus 组件的入口与实现分层](https://github.com/element-plus/element-plus/tree/dev/packages/components/button)，按本库规模组织
-
 ```text
 src/
 ├── index.ts                       # 公开根入口
@@ -24,6 +22,7 @@ src/
 │   ├── form/                      # Form、FormItem 与字段上下文
 │   ├── table/                     # Table 与列设置
 │   ├── pagination/                # 独立分页合同
+│   ├── sidebar/                   # 侧栏容器、折叠展示与两级导航
 │   ├── loading/                   # 加载指令、值类型与蒙层生命周期
 │   └── notification/              # 命令式服务、内部列表与通知生命周期
 ├── shared/
