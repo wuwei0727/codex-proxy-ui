@@ -79,7 +79,7 @@ function persistWidths() {
     }
     if (props.tableId) {
       window.dispatchEvent(new CustomEvent(`codex-proxy:table-widths-updated:${props.tableId}`, {
-        detail: { ...columnCustomWidths.value }
+        detail: { ...columnCustomWidths.value },
       }))
     }
   }
@@ -182,6 +182,24 @@ function handleResetColumnWidth(column: ResolvedTableColumn<Row>) {
   columnCustomWidths.value = next
   persistWidths()
   emit('columnResetWidth', column.key)
+  void nextTick(updateScrollLayout)
+}
+
+function handleResizeKeydown(event: KeyboardEvent, column: ResolvedTableColumn<Row>) {
+  if (!['ArrowLeft', 'ArrowRight', 'Home', 'Enter', ' '].includes(event.key))
+    return
+  event.preventDefault()
+  event.stopPropagation()
+  if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') {
+    handleResetColumnWidth(column)
+    return
+  }
+  const minimum = Math.max(36, column.minWidth ?? (column.kind === 'status' ? 44 : 56))
+  const current = columnCustomWidths.value[column.key] ?? column.basisWidth
+  const width = Math.max(minimum, current + (event.key === 'ArrowRight' ? 10 : -10))
+  columnCustomWidths.value = { ...columnCustomWidths.value, [column.key]: width }
+  persistWidths()
+  emit('columnResize', { key: column.key, width })
   void nextTick(updateScrollLayout)
 }
 
@@ -413,9 +431,8 @@ function sortButtonLabel(column: ResolvedTableColumn<Row>) {
                 :aria-sort="columnAriaSort(column)"
               >
                 <div
-                  :class="[
+                  class="flex items-center min-w-0 max-w-full" :class="[
                     cellContentClass(column),
-                    'flex items-center min-w-0 max-w-full',
                     headerJustifyClass(column),
                   ]"
                   :data-column-motion="column.sticky ? undefined : column.key"
@@ -453,23 +470,26 @@ function sortButtonLabel(column: ResolvedTableColumn<Row>) {
                     <span class="truncate">{{ column.label }}</span>
                   </slot>
                 </div>
-                <div
+                <button
                   v-if="canResizeColumn(column, columnIndex)"
-                  class="z-table-resizer group/resizer absolute top-0 right-0 bottom-0 z-30 flex w-3.5 cursor-col-resize select-none touch-none items-center justify-center transition-colors hover:bg-z-primary/15"
+                  type="button"
+                  :aria-label="`${column.label || column.key} - ${locale.table.resizeColumn}`"
+                  class="z-table-resizer group/resizer absolute top-0 right-0 bottom-0 z-30 flex w-3.5 cursor-col-resize select-none touch-none items-center justify-center border-0 bg-transparent p-0 transition-colors hover:bg-z-primary/15"
                   :class="{ 'bg-z-primary/20': resizingColumnKey === column.key }"
                   :title="locale.table.resizeColumn ?? '拖动调整列宽，双击恢复默认'"
                   @mousedown.stop.prevent="handleResizeStart($event, column)"
                   @dblclick.stop.prevent="handleResetColumnWidth(column)"
+                  @keydown="handleResizeKeydown($event, column)"
                 >
                   <div
                     class="h-4 w-[2px] rounded-full bg-z-border transition-all duration-150 group-hover/th:h-4.5 group-hover/th:bg-z-text-quaternary group-hover/resizer:h-5 group-hover/resizer:w-1 group-hover/resizer:bg-z-primary group-hover/resizer:shadow-[0_0_6px_var(--z-color-primary)]"
                     :class="[
                       resizingColumnKey === column.key
                         ? '!h-5 !w-1 !bg-z-primary !shadow-[0_0_8px_var(--z-color-primary)]'
-                        : ''
+                        : '',
                     ]"
                   />
-                </div>
+                </button>
               </th>
             </tr>
           </thead>

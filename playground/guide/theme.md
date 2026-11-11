@@ -43,9 +43,11 @@ JavaScript 中使用 `getThemeVarName('color-primary')` 获取当前前缀下的
 
 `createTheme(options?)` 接收 `ThemeOptions`：`preset` 选择表面材质，缺省为 `default`；`scheme` 选择明暗，`colorId` 选择品牌配色，使用 `'custom'` 时通过 `primaryColor` 传入主色 HEX。省略品牌配置时使用材质的推荐配色，`customization` 调整 Seed、组件尺寸或允许覆盖的 Token
 
-完整主题使用 `createTheme({ colorId, ...themeProfiles[colorId], scheme })`，其中 `colorId` 为预设配色 ID。`themeProfiles` 提供推荐材质和全局、组件配置；传入不同的 `preset` 可单独切换材质
+完整预设使用 `createTheme({ colorId, ...themeProfiles[colorId], scheme })`。预设可以声明任意 `ThemeCustomization`；内置预设只配置材质与尺寸。编辑器用 `resolveThemeProfile(colorId, customization.seed)` 切换预设：预设显式声明的颜色生效，其余保留用户的设置
 
-`default` 保留简洁表面，`soft` 提供表面高光、渐变与分层阴影，背景和文字基线均跟随品牌配色。材质不改变圆角、字号或组件尺寸，这些值由 Seed 与组件配置决定。Card 等基础组件自动消费对应 Token，无需业务页面判断主题
+切换品牌配色或自定义主色不改变成功、警告、错误、信息与链接色。背景和文字基色默认随明暗模式切换；显式覆盖其中一项后，两个模式均使用该值
+
+`default` 保留简洁表面，`soft` 提供表面高光、渐变与分层阴影。材质不改变圆角、字号或组件尺寸，这些值由 Seed 与组件配置决定。Card 等基础组件自动消费对应 Token，无需业务页面判断主题
 
 ```ts
 import { createTheme } from '@codex-proxy/ui/theme'
@@ -101,6 +103,7 @@ const theme = createTheme({ scheme: 'dark', colorId: 'deep-teal' })
 | --------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
 | `createThemeSeedTokens(options?)`                                                             | 仅解析 Seed，适用于品牌色卡等无需完整主题的预览      |
 | `createTheme(options?)`                                                                       | 生成独立的 `Theme`，省略配置时使用浅色与默认配色     |
+| `resolveThemeProfile(colorId, currentSeed?)`                                                  | 取得预设材质和配置，保留已有的功能色与中性色覆盖     |
 | `applyTheme(root, theme)`                                                                     | 将主题应用到文档根元素                               |
 | `resolveThemeScheme(mode, prefersDark)`                                                       | 将系统跟随模式解析为明暗方案                         |
 | `createThemeVars(tokens)`、`getThemeVarName(name)`                                            | 生成当前构建前缀下的 CSS 变量                        |

@@ -76,7 +76,6 @@ export function useTableColumns<Row extends TableRow>(
     },
   )
 
-
   const orderedColumns = computed(() => {
     const columns = resolveColumns(toValue(source))
     const ranks = new Map(order.value.map((key, index) => [key, index]))
@@ -144,7 +143,7 @@ export function useTableColumns<Row extends TableRow>(
     order.value = [...new Set(keys.filter(key => movable.has(key)))]
   }
 
-    function resetColumns() {
+  function resetColumns() {
     overrides.value = {}
     order.value = []
     widths.value = {}
@@ -172,7 +171,9 @@ export function useTableColumns<Row extends TableRow>(
   }
 
   if (typeof window !== 'undefined') {
-    const onReset = () => { widths.value = {} }
+    const onReset = () => {
+      widths.value = {}
+    }
     const onUpdate = (e: Event) => {
       widths.value = (e as CustomEvent).detail || {}
     }
