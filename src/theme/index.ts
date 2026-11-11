@@ -27,13 +27,13 @@ export {
 export {
   createTheme,
   createThemeSeedTokens,
+  resolveThemeProfile,
   resolveThemeScheme,
 } from './core/resolve'
 export { createThemeVars, getThemeVarName, themePrefix } from './namespace'
 export { applyTheme } from './runtime/browser'
 export type {
   Theme,
-  ThemeAppearanceSeed,
   ThemeColorId,
   ThemeColorPreset,
   ThemeColorPresetId,
@@ -44,6 +44,8 @@ export type {
   ThemePreset,
   ThemePresetId,
   ThemeScheme,
+  ThemeSeedColors,
+  ThemeSeedDimensions,
   ThemeSeedOverrides,
   ThemeSeedTokens,
   ThemeTokenName,

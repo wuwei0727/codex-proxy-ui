@@ -1,11 +1,15 @@
 import type {
   ThemeColorPreset,
   ThemeColorPresetId,
+  ThemeComponentOverrides,
   ThemeCustomization,
   ThemeMode,
   ThemePreset,
   ThemePresetColorName,
   ThemePresetId,
+  ThemeScheme,
+  ThemeSeedColors,
+  ThemeSeedDimensions,
   ThemeTokenName,
 } from '../types'
 import { presetPrimaryColors } from '@ant-design/colors'
@@ -22,12 +26,30 @@ export const themePresets: readonly ThemePreset[] = [
   { id: 'soft', colorId: defaultThemeColorId, primaryColor: defaultThemePrimaryColor },
 ]
 
-export const DEFAULT_SEED_COLORS = {
+export const BLACK = '#000000'
+export const WHITE = '#FFFFFF'
+export const LIGHT_FOREGROUND = WHITE
+export const LIGHT_CONTAINER_BASE = WHITE
+export const LIGHT_TEXT_BASE = '#0E1726'
+export const DARK_CONTAINER_BASE = '#111A29'
+export const DARK_TEXT_BASE = '#D8E2EE'
+
+const lightSeedColors = {
   colorSuccess: '#12B981',
   colorWarning: '#F59E0B',
   colorError: '#EF4444',
   colorInfo: defaultThemePrimaryColor,
-} as const
+  colorLink: defaultThemePrimaryColor,
+  colorTextBase: LIGHT_TEXT_BASE,
+  colorBgBase: LIGHT_CONTAINER_BASE,
+} satisfies ThemeSeedColors
+
+export const SEED_COLORS_BY_SCHEME = {
+  light: lightSeedColors,
+  dark: { ...lightSeedColors, colorTextBase: DARK_TEXT_BASE, colorBgBase: DARK_CONTAINER_BASE },
+} satisfies Record<ThemeScheme, ThemeSeedColors>
+
+export const THEME_SEED_COLOR_KEYS = Object.keys(lightSeedColors) as (keyof ThemeSeedColors)[]
 
 export const PRESET_COLOR_SEEDS = {
   blue: presetPrimaryColors.blue,
@@ -38,16 +60,19 @@ export const PRESET_COLOR_SEEDS = {
   red: presetPrimaryColors.red,
 } as const satisfies Record<ThemePresetColorName, string>
 
-export const DEFAULT_DIMENSIONS = {
+export const DEFAULT_SEED_DIMENSIONS = {
   fontSize: 13,
   sizeUnit: 4,
   sizeStep: 4,
   controlHeight: 38,
-  tableRowHeight: 60,
   borderRadius: 8,
-  cardBorderRadius: 18,
   shadowStrength: 100,
-} as const
+} satisfies ThemeSeedDimensions
+
+export const DEFAULT_COMPONENT_DIMENSIONS = {
+  tableRowHeight: 60,
+  cardBorderRadius: 18,
+} satisfies Required<ThemeComponentOverrides>
 
 export const themeColorPresets: readonly ThemeColorPreset[] = [
   {
@@ -59,82 +84,43 @@ export const themeColorPresets: readonly ThemeColorPreset[] = [
     id: 'deep-teal',
     ...en.theme['deep-teal'],
     seed: '#50605E',
-    appearance: {
-      light: {
-        colorBgBase: '#F8F8F3',
-        colorTextBase: '#282D2C',
-      },
-      dark: {
-        colorBgBase: '#202727',
-        colorTextBase: '#E4E7DF',
-      },
-    },
   },
   {
     id: 'signal-violet',
     ...en.theme['signal-violet'],
     seed: '#D395A8',
-    appearance: {
-      light: {
-        colorBgBase: '#FCF6F7',
-        colorTextBase: '#3A2E36',
-      },
-      dark: {
-        colorBgBase: '#29242A',
-        colorTextBase: '#F1E6E9',
-      },
-    },
   },
   {
     id: 'graphite',
     ...en.theme.graphite,
     seed: '#A34537',
-    appearance: {
-      light: {
-        colorBgBase: '#FBF5E8',
-        colorTextBase: '#3D302A',
-      },
-      dark: {
-        colorBgBase: '#302421',
-        colorTextBase: '#F0E3CD',
-      },
-    },
   },
 ] as const
 
-/** 完整主题按配色标识索引，配置可直接交给同一编译器或复制为编辑草稿 */
 export const themeProfiles: Readonly<Record<ThemeColorPresetId, { preset: ThemePresetId, customization: ThemeCustomization }>> = {
   'relay-blue': { preset: 'default', customization: {} },
   'deep-teal': {
     preset: 'default',
     customization: {
-      seed: { colorInfo: '#5F7782', colorSuccess: '#50785C', colorWarning: '#A67A40', controlHeight: 36, borderRadius: 4, shadowStrength: 55 },
+      seed: { controlHeight: 36, borderRadius: 4, shadowStrength: 55 },
       component: { cardBorderRadius: 6, tableRowHeight: 60 },
     },
   },
   'signal-violet': {
     preset: 'default',
     customization: {
-      seed: { colorInfo: '#82719A', colorSuccess: '#458365', colorWarning: '#B78032', fontSize: 14, controlHeight: 42, borderRadius: 5 },
+      seed: { fontSize: 14, controlHeight: 42, borderRadius: 5 },
       component: { cardBorderRadius: 8, tableRowHeight: 68 },
     },
   },
   'graphite': {
     preset: 'soft',
     customization: {
-      seed: { colorInfo: '#466D76', colorSuccess: '#537854', colorWarning: '#BD8C3F', controlHeight: 38, borderRadius: 6, shadowStrength: 80 },
+      seed: { controlHeight: 38, borderRadius: 6, shadowStrength: 80 },
       component: { cardBorderRadius: 12, tableRowHeight: 54 },
     },
   },
 }
-
-export const BLACK = '#000000'
-export const WHITE = '#FFFFFF'
-export const LIGHT_FOREGROUND = WHITE
-export const LIGHT_CONTAINER_BASE = WHITE
-export const LIGHT_TEXT_BASE = '#0E1726'
-export const DARK_CONTAINER_BASE = '#111A29'
-export const DARK_TEXT_BASE = '#D8E2EE'
 
 /** 中继蓝浅色主题的稳定中性色阶；带色温主题会连续过渡到通用派生结果。 */
 export const LIGHT_SURFACE_ANCHORS = {
