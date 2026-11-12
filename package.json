@@ -1,7 +1,7 @@
 {
   "name": "@codex-proxy/ui",
   "type": "module",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "packageManager": "pnpm@11.7.0",
   "description": "Vue 3 components, design tokens and theme utilities built with TypeScript",
   "license": "Apache-2.0",

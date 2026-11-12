@@ -3,7 +3,7 @@
 从 GitHub Release 安装固定版本，包名与导入路径保持 `@codex-proxy/ui`
 
 ```bash
-pnpm add https://github.com/zyycn/codex-proxy-ui/releases/download/v0.10.0/codex-proxy-ui-0.10.0.tgz
+pnpm add https://github.com/zyycn/codex-proxy-ui/releases/download/v0.10.1/codex-proxy-ui-0.10.1.tgz
 ```
 
 提交消费方锁文件以固定下载地址和完整性摘要，Release 提供独立的 `.sha256` 校验文件
