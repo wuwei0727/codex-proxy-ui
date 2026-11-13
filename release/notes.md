@@ -1,14 +1,20 @@
-# v0.10.1
+# v0.11.0
 
-## 主题预设
+## 组件
 
-- 恢复「水墨江汀」「粉墙回廊」「朱阙金瓦」各自的浅色和深色底色，页面、侧栏、卡片和浮层随预设切换
-- 切换预设保留「功能色与中性色」的七项设置。手动指定的基础背景色优先，单项恢复后重新使用当前预设的底色
+- 新增标签输入框，支持回车或空格添加、拖动排序，宽度不足时折叠为 `+N`
+- 可筛选的选择器支持直接输入关键词，选中项不再显示对号
+- 统一输入框、选择器和日期选择器的留白与图标位置，修复禁用输入框显示光标的问题
+- 修复切换深色主题时表格闪白的问题
+
+## Playground
+
+- 按功能拆分示例，精简组件说明
 
 ## 安装
 
 ```bash
-pnpm add https://github.com/zyycn/codex-proxy-ui/releases/download/v0.10.1/codex-proxy-ui-0.10.1.tgz
+pnpm add https://github.com/zyycn/codex-proxy-ui/releases/download/v0.11.0/codex-proxy-ui-0.11.0.tgz
 ```
 
 需要 Node.js 24+、Vue 3.5+，包名为 `@codex-proxy/ui`
