@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import ButtonDemo from '../examples/ButtonDemo.vue'
+import ButtonDisabledDemo from '../examples/ButtonDisabledDemo.vue'
+import ButtonLoadingDemo from '../examples/ButtonLoadingDemo.vue'
+import ButtonSizesDemo from '../examples/ButtonSizesDemo.vue'
 </script>
 
 # Button 按钮
 
-触发保存、提交、删除等操作，通过颜色和样式表达操作的用途与强调程度
+执行操作或提交表单。
 
 ## 基础用法
 
@@ -18,39 +21,7 @@ import ButtonDemo from '../examples/ButtonDemo.vue'
 
 <template #source>
 
-```vue
-<script setup lang="ts">
-import type { ButtonType, ButtonVariant } from '@codex-proxy/ui'
-import { ZButton } from '@codex-proxy/ui'
-
-const types: Record<ButtonType, string> = {
-  default: '默认',
-  primary: '主要',
-  success: '成功',
-  info: '信息',
-  warning: '警告',
-  danger: '危险',
-}
-const variants: ButtonVariant[] = ['solid', 'plain', 'text', 'link']
-</script>
-
-<template>
-  <div v-for="variant in variants" :key="variant" class="button-row">
-    <ZButton v-for="(label, type) in types" :key="type" :type="type" :variant="variant">
-      {{ label }}
-    </ZButton>
-  </div>
-</template>
-
-<style scoped>
-.button-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-</style>
-```
+<<< @/examples/ButtonDemo.vue
 
 </template>
 
@@ -63,34 +34,12 @@ const variants: ButtonVariant[] = ['solid', 'plain', 'text', 'link']
 <DemoExample>
 
 <ClientOnly>
-  <ButtonDemo example="disabled" />
+  <ButtonDisabledDemo />
 </ClientOnly>
 
 <template #source>
 
-```vue
-<script setup lang="ts">
-import type { ButtonType } from '@codex-proxy/ui'
-import { ZButton } from '@codex-proxy/ui'
-
-const types: Record<ButtonType, string> = {
-  default: '默认',
-  primary: '主要',
-  success: '成功',
-  info: '信息',
-  warning: '警告',
-  danger: '危险',
-}
-</script>
-
-<template>
-  <div style="display: flex; flex-wrap: wrap; gap: 12px">
-    <ZButton v-for="(label, type) in types" :key="type" :type="type" disabled>
-      {{ label }}
-    </ZButton>
-  </div>
-</template>
-```
+<<< @/examples/ButtonDisabledDemo.vue
 
 </template>
 
@@ -103,27 +52,12 @@ const types: Record<ButtonType, string> = {
 <DemoExample>
 
 <ClientOnly>
-  <ButtonDemo example="loading" />
+  <ButtonLoadingDemo />
 </ClientOnly>
 
 <template #source>
 
-```vue
-<script setup lang="ts">
-import { ZButton } from '@codex-proxy/ui'
-</script>
-
-<template>
-  <div style="display: flex; gap: 12px">
-    <ZButton type="primary" loading>
-      保存中
-    </ZButton>
-    <ZButton variant="plain" loading>
-      加载中
-    </ZButton>
-  </div>
-</template>
-```
+<<< @/examples/ButtonLoadingDemo.vue
 
 </template>
 
@@ -131,47 +65,21 @@ import { ZButton } from '@codex-proxy/ui'
 
 ## 按钮尺寸
 
-使用 `size` 选择小、默认或大尺寸，同一区域保持尺寸一致
+使用 `size` 选择小、默认或大尺寸
 
 <DemoExample>
 
 <ClientOnly>
-  <ButtonDemo example="sizes" />
+  <ButtonSizesDemo />
 </ClientOnly>
 
 <template #source>
 
-```vue
-<script setup lang="ts">
-import { ZButton } from '@codex-proxy/ui'
-</script>
-
-<template>
-  <div style="display: flex; align-items: center; gap: 12px">
-    <ZButton size="small" type="primary">
-      小尺寸
-    </ZButton>
-    <ZButton type="primary">
-      中尺寸
-    </ZButton>
-    <ZButton size="large" type="primary">
-      大尺寸
-    </ZButton>
-  </div>
-</template>
-```
+<<< @/examples/ButtonSizesDemo.vue
 
 </template>
 
 </DemoExample>
-
-## 组合配置
-
-调整语义、样式和状态，点击按钮查看当前组合的交互效果
-
-<ClientOnly>
-  <ButtonDemo example="playground" />
-</ClientOnly>
 
 ## Button API {#api}
 

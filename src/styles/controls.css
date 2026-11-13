@@ -1,6 +1,7 @@
 /* 默认宽度放在组件层，调用方的宽度工具类和内联样式可直接覆盖 */
 @layer components {
   .z-input,
+  .z-input-tag,
   .z-select,
   .z-textarea {
     width: 100%;

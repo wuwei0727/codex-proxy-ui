@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import TextareaDemo from '../examples/TextareaDemo.vue'
+import TextareaAutosizeDemo from '../examples/TextareaAutosizeDemo.vue'
 </script>
 
 # Textarea 文本域
 
-输入多行说明与较长文本
+输入多行文本。
 
 ## 基础用法
+
+通过 `rows` 设置初始行数。
 
 <DemoExample>
 
@@ -16,30 +19,29 @@ import TextareaDemo from '../examples/TextareaDemo.vue'
 
 <template #source>
 
-```vue
-<script setup lang="ts">
-import { ZFormItem, ZTextarea } from '@codex-proxy/ui'
-import { ref } from 'vue'
-
-const description = ref('')
-</script>
-
-<template>
-  <ZFormItem label="配置说明">
-    <ZTextarea v-model="description" :rows="3" placeholder="补充说明" />
-  </ZFormItem>
-</template>
-```
+<<< @/examples/TextareaDemo.vue
 
 </template>
 
 </DemoExample>
 
-## 用法说明
+## 自适应高度
 
-默认宽度为容器的 `100%`，可通过 `class / style` 指定宽度
+设置 `autosize` 使文本域随内容增高。
 
-`rows` 控制初始行数，`resize` 控制允许拖动的方向
+<DemoExample>
+
+<ClientOnly>
+  <TextareaAutosizeDemo />
+</ClientOnly>
+
+<template #source>
+
+<<< @/examples/TextareaAutosizeDemo.vue
+
+</template>
+
+</DemoExample>
 
 ## Textarea API {#api}
 

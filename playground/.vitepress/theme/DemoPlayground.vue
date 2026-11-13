@@ -9,11 +9,5 @@ defineProps<{ wide?: boolean }>()
         <slot />
       </div>
     </div>
-    <div v-if="$slots.controls" class="demo-controls" role="group" aria-label="示例配置">
-      <span class="demo-controls-label">配置</span>
-      <div class="demo-controls-fields">
-        <slot name="controls" />
-      </div>
-    </div>
   </div>
 </template>

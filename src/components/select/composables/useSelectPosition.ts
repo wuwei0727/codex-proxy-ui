@@ -5,12 +5,11 @@ import { computed, ref, shallowRef } from 'vue'
 
 export interface SelectPositionElements {
   controlRef: Ref<HTMLElement | null>
-  searchRef: Ref<HTMLElement | null>
   listboxRef: Ref<HTMLElement | null>
 }
 
 export function useSelectPosition(open: Ref<boolean>, selectId: string, elements: SelectPositionElements) {
-  const { controlRef, searchRef, listboxRef } = elements
+  const { controlRef, listboxRef } = elements
   const popoverStyle = shallowRef<CSSProperties>({})
   const popoverMaxHeight = ref('244px')
   const popoverPlacement = ref<'top' | 'bottom'>('bottom')
@@ -21,8 +20,7 @@ export function useSelectPosition(open: Ref<boolean>, selectId: string, elements
 
     const rect = controlRef.value.getBoundingClientRect()
     const gap = 6
-    const searchHeight = searchRef.value?.offsetHeight ?? 0
-    const menuHeight = Math.min(listboxRef.value.scrollHeight, 244) + searchHeight
+    const menuHeight = Math.min(listboxRef.value.scrollHeight, 244)
     const belowSpace = window.innerHeight - rect.bottom - gap - 8
     const aboveSpace = rect.top - gap - 8
     const placeAbove = belowSpace < menuHeight && aboveSpace > belowSpace
@@ -36,7 +34,7 @@ export function useSelectPosition(open: Ref<boolean>, selectId: string, elements
     // 原生锚点由浏览器随滚动合成，避免 body 浮层等待主线程坐标更新。
     const nativeAnchor = CSS.supports('top', 'anchor(bottom)')
     popoverPlacement.value = placeAbove ? 'top' : 'bottom'
-    popoverMaxHeight.value = `${Math.max(0, maxHeight - searchHeight)}px`
+    popoverMaxHeight.value = `${maxHeight}px`
     popoverStyle.value = {
       positionAnchor: nativeAnchor ? `--${selectId}` : undefined,
       positionVisibility: nativeAnchor ? 'anchors-visible' : undefined,
@@ -53,7 +51,7 @@ export function useSelectPosition(open: Ref<boolean>, selectId: string, elements
   const viewportTarget = computed(() => open.value ? window : null)
   useEventListener(viewportTarget, 'resize', updatePopoverPosition)
   useEventListener(viewportTarget, 'scroll', updatePopoverPosition, { capture: true, passive: true })
-  useResizeObserver([controlRef, listboxRef, searchRef], updatePopoverPosition)
+  useResizeObserver([controlRef, listboxRef], updatePopoverPosition)
 
   return { popoverStyle, popoverMaxHeight, popoverPlacement, updatePopoverPosition }
 }

@@ -44,6 +44,7 @@ export default defineConfig({
         { text: '表单', collapsed: false, items: [
           { text: 'Form 表单', link: '/components/form' },
           { text: 'Input 输入框', link: '/components/input' },
+          { text: 'InputTag 标签输入', link: '/components/input-tag' },
           { text: 'InputNumber 数字输入', link: '/components/input-number' },
           { text: 'Textarea 文本域', link: '/components/textarea' },
           { text: 'Select 选择器', link: '/components/select' },

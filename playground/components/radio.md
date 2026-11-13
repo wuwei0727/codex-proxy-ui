@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import RadioDemo from '../examples/RadioDemo.vue'
+import RadioDisabledDemo from '../examples/RadioDisabledDemo.vue'
 </script>
 
 # Radio 单选框
 
-从同一组选项中选择一项
+从一组选项中选择一项。
 
 ## 基础用法
+
+同组单选框使用相同的 `name` 和 `v-model`，每项设置不同的 `value`。
 
 <DemoExample>
 
@@ -16,27 +19,29 @@ import RadioDemo from '../examples/RadioDemo.vue'
 
 <template #source>
 
-```vue
-<script setup lang="ts">
-import { ZRadio } from '@codex-proxy/ui'
-import { ref } from 'vue'
-
-const scope = ref('selected')
-</script>
-
-<template>
-  <ZRadio v-model="scope" name="scope" value="selected" label="指定请求" />
-  <ZRadio v-model="scope" name="scope" value="all" label="全部请求" />
-</template>
-```
+<<< @/examples/RadioDemo.vue
 
 </template>
 
 </DemoExample>
 
-## 用法说明
+## 禁用状态
 
-同组使用相同的 `name` 与 `v-model`，每个选项设置不同的 `value`
+使用 `disabled` 禁用指定选项。
+
+<DemoExample>
+
+<ClientOnly>
+  <RadioDisabledDemo />
+</ClientOnly>
+
+<template #source>
+
+<<< @/examples/RadioDisabledDemo.vue
+
+</template>
+
+</DemoExample>
 
 ## Radio API {#api}
 

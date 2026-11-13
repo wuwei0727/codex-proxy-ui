@@ -6,6 +6,7 @@ import { useLocale } from '../../locale/context'
 
 import { useFormField } from '../form/composables/useFormField'
 import IconButton from '../icon-button/IconButton.vue'
+import { getInputClasses } from '../input/styles'
 
 defineOptions({ inheritAttrs: false })
 
@@ -19,7 +20,7 @@ const props = withDefaults(
     readonly?: boolean
     controls?: boolean
     precision?: number
-    size?: Extract<ComponentSize, 'small' | 'default'>
+    size?: ComponentSize
   }>(),
   {
     min: undefined,
@@ -91,29 +92,22 @@ function stepBy(direction: -1 | 1) {
 <template>
   <div
     v-bind="rootAttrs"
-    class="z-input-number inline-flex min-w-0 items-center rounded-z px-1.5 text-z-text transition-[background-color,box-shadow] duration-150 motion-reduce:transition-none"
+    class="z-input-number inline-flex items-center"
     :data-size="size"
-    :class="[
-      size === 'default' ? 'h-z-control' : 'h-z-control-sm',
-      disabled
-        ? 'cursor-not-allowed bg-z-bg-container-disabled'
-        : invalid
-          ? 'bg-z-error-container shadow-z-input hover:not-focus-within:bg-(--z-input-error-active-bg) hover:not-focus-within:shadow-z-input-error-active focus-within:bg-(--z-input-error-active-bg) focus-within:shadow-z-input-error-active'
-          : 'bg-(--z-input-bg) shadow-z-input hover:not-focus-within:bg-(--z-input-hover-bg) hover:not-focus-within:shadow-z-input-hover focus-within:bg-(--z-input-active-bg) focus-within:shadow-z-input-active',
-    ]"
+    :class="getInputClasses(size, disabled, invalid, { inset: controls ? 'item' : 'text' })"
   >
     <IconButton
       v-if="controls"
       :aria-label="locale.inputNumber.decrease(controlLabel)"
       size="small"
-      :class="size === 'default' ? 'size-6!' : 'size-5!'"
+      class="size-(--field-row)!"
       :disabled="!canDecrease"
       @click="stepBy(-1)"
     >
       <Minus class="size-3" />
     </IconButton>
 
-    <span class="inline-flex min-w-0 flex-1 items-baseline justify-center gap-1 px-1">
+    <span class="inline-flex min-w-0 flex-1 items-baseline justify-center gap-1">
       <input
         v-bind="controlAttrs"
         :id="controlId"
@@ -131,8 +125,8 @@ function stepBy(direction: -1 | 1) {
         :step="step"
         :disabled="disabled"
         :readonly="readonly"
-        class="min-w-0 appearance-[textfield] border-0 bg-transparent p-0 font-mono tabular-nums text-z-text outline-none disabled:text-z-text-disabled [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
-        :class="size === 'default' ? 'w-full text-center text-z' : 'w-9 text-right text-z-xs font-bold'"
+        class="h-(--field-row) min-w-0 appearance-[textfield] border-0 bg-transparent p-0 font-mono tabular-nums text-z-text outline-none disabled:text-z-text-disabled [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
+        :class="size === 'small' ? 'w-9 text-right font-bold' : 'w-full text-center'"
         @input="updateDraft"
         @change="commitDraft"
         @focus="emit('focus', $event)"
@@ -147,7 +141,7 @@ function stepBy(direction: -1 | 1) {
       v-if="controls"
       :aria-label="locale.inputNumber.increase(controlLabel)"
       size="small"
-      :class="size === 'default' ? 'size-6!' : 'size-5!'"
+      class="size-(--field-row)!"
       :disabled="!canIncrease"
       @click="stepBy(1)"
     >

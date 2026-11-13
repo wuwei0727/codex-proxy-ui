@@ -62,7 +62,7 @@ export { notification as ZNotification } from './service'
 
 DOM 指令由对应实体拥有，例如 loading/ 的 directive.ts 与 types.ts。入口导出 `vLoading`，供 `<script setup>` 局部使用或注册为全局 `v-loading`；应用只负责注册，蒙层和 DOM 状态的清理由组件库负责
 
-文档站通过 VitePress 默认主题的插槽和样式扩展组织导航与阅读布局。`DemoExample` 将示例与可折叠的用法代码放在一起，`DemoPlayground` 管理预览和配置区；文档排版避开 `vp-raw` 示例区域，组件示例使用库内真实实现
+文档站通过 VitePress 默认主题的插槽和样式扩展组织导航与阅读布局。`DemoExample` 按功能展示独立示例，展开可查看对应 Vue 文件的源码；`DemoPlayground` 提供预览布局；文档排版避开 `vp-raw` 示例区域，组件示例使用库内真实实现
 
 `DocsSidebar` 在 VitePress 原侧栏外组合 `ZScrollbar`，菜单和移动端控制仍由默认主题持有。页面滚动条使用 `ZScrollbar` 的文档目标模式，保持原生页面滚动源
 

@@ -4,11 +4,13 @@ import PageHeaderDemo from '../examples/PageHeaderDemo.vue'
 
 # PageHeader 页头
 
-统一页面标题、副标题与右侧操作区
+在页面顶部显示标题和操作。
 
 ## 基础用法
 
-<DemoExample>
+使用 `title` 设置主标题，在 `actions` 插槽中放置按钮。
+
+<DemoExample wide>
 
 <ClientOnly>
   <PageHeaderDemo />
@@ -16,34 +18,11 @@ import PageHeaderDemo from '../examples/PageHeaderDemo.vue'
 
 <template #source>
 
-```vue
-<script setup lang="ts">
-import { ZButton, ZPageHeader } from '@codex-proxy/ui'
-import { ref } from 'vue'
-
-const count = ref(0)
-</script>
-
-<template>
-  <ZPageHeader title="配置管理" :description="`已刷新 ${count} 次`">
-    <template #actions>
-      <ZButton @click="count++">
-        刷新
-      </ZButton>
-    </template>
-  </ZPageHeader>
-</template>
-```
+<<< @/examples/PageHeaderDemo.vue
 
 </template>
 
 </DemoExample>
-
-## 用法说明
-
-`title` 定义页面主标题，`description` 提供简短说明，`actions` 插槽放置操作按钮
-
-组件使用一级标题，实际页面通常只放置一个页头
 
 ## PageHeader API {#api}
 

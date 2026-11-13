@@ -144,6 +144,7 @@ function deriveThemeMap(
       semantics.error,
       seedTokens.shadowStrength,
       preset,
+      customization.tokenOverrides?.['input-bg'],
     ),
     dimensions: deriveThemeDimensionMap(seedTokens, customization.component),
   }

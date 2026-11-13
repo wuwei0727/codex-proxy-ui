@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import CheckboxDemo from '../examples/CheckboxDemo.vue'
+import CheckboxMixedDemo from '../examples/CheckboxMixedDemo.vue'
 </script>
 
 # Checkbox 复选框
 
-独立选择一个选项，也可呈现半选状态
+选择或取消一个选项。
 
 ## 基础用法
+
+使用 `v-model` 绑定布尔值。
 
 <DemoExample>
 
@@ -16,26 +19,29 @@ import CheckboxDemo from '../examples/CheckboxDemo.vue'
 
 <template #source>
 
-```vue
-<script setup lang="ts">
-import { ZCheckbox } from '@codex-proxy/ui'
-import { ref } from 'vue'
-
-const checked = ref(false)
-</script>
-
-<template>
-  <ZCheckbox v-model="checked" label="允许修改响应头" />
-</template>
-```
+<<< @/examples/CheckboxDemo.vue
 
 </template>
 
 </DemoExample>
 
-## 用法说明
+## 半选状态
 
-`v-model` 绑定布尔值，`indeterminate` 仅表示半选外观
+使用 `indeterminate` 表示部分选中。
+
+<DemoExample>
+
+<ClientOnly>
+  <CheckboxMixedDemo />
+</ClientOnly>
+
+<template #source>
+
+<<< @/examples/CheckboxMixedDemo.vue
+
+</template>
+
+</DemoExample>
 
 ## Checkbox API {#api}
 

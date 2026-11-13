@@ -1,45 +1,14 @@
 <script setup lang="ts">
-import { ZButton, ZCheckbox, ZInputNumber, ZPopover, ZSelect } from '@codex-proxy/ui'
-import { ref } from 'vue'
-import DemoPlayground from '../.vitepress/theme/DemoPlayground.vue'
-
-const placement = ref<'top' | 'bottom' | 'left' | 'right'>('bottom')
-const trigger = ref<'click' | 'hover' | 'hover-click'>('click')
-const offset = ref(6)
-const enterable = ref(true)
-const hideAfter = ref(200)
-const placements = [{ label: '上', value: 'top' }, { label: '下', value: 'bottom' }, { label: '左', value: 'left' }, { label: '右', value: 'right' }]
-const triggers = [{ label: '点击', value: 'click' }, { label: '悬停', value: 'hover' }, { label: '点击或悬停', value: 'hover-click' }]
+import { ZButton, ZPopover } from '@codex-proxy/ui'
 </script>
 
 <template>
-  <DemoPlayground>
-    <ZPopover :placement="placement" :trigger="trigger" :offset="offset" :enterable="enterable" :hide-after="hideAfter">
-      <template #reference>
-        <ZButton>授权说明</ZButton>
-      </template>
-      <div class="px-3 py-2">
-        插件只会使用已明确授予的权限
-      </div>
-    </ZPopover>
-    <template #controls>
-      <div class="demo-control">
-        <span>位置</span>
-        <ZSelect v-model="placement" class="w-36" :options="placements" size="small" aria-label="气泡位置" />
-      </div>
-      <div class="demo-control">
-        <span>触发</span>
-        <ZSelect v-model="trigger" class="w-36" :options="triggers" size="small" aria-label="触发方式" />
-      </div>
-      <div class="demo-control">
-        <span>间距</span>
-        <ZInputNumber v-model="offset" class="w-28" size="small" aria-label="气泡间距" :min="0" :max="24" />
-      </div>
-      <ZCheckbox v-model="enterable" label="允许移入" />
-      <div class="demo-control">
-        <span>关闭延迟</span>
-        <ZInputNumber v-model="hideAfter" class="w-28" size="small" aria-label="关闭延迟" :min="0" :max="2000" :step="100" />
-      </div>
+  <ZPopover placement="bottom" trigger="click">
+    <template #reference>
+      <ZButton>授权说明</ZButton>
     </template>
-  </DemoPlayground>
+    <p style="margin: 0; padding: 8px 12px">
+      插件只会使用已明确授予的权限
+    </p>
+  </ZPopover>
 </template>

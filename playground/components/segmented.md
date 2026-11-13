@@ -4,11 +4,13 @@ import SegmentedDemo from '../examples/SegmentedDemo.vue'
 
 # Segmented 分段选择
 
-在少量互斥视图间切换，选中状态由 v-model 管理
+在少量互斥选项之间切换。
 
 ## 基础用法
 
-<DemoExample>
+通过 `options` 提供选项，使用 `v-model` 绑定选中值。
+
+<DemoExample wide>
 
 <ClientOnly>
   <SegmentedDemo />
@@ -16,34 +18,11 @@ import SegmentedDemo from '../examples/SegmentedDemo.vue'
 
 <template #source>
 
-```vue
-<script setup lang="ts">
-import { ZSegmented } from '@codex-proxy/ui'
-import { ref } from 'vue'
-
-const view = ref('installed')
-const options = [
-  { label: '已安装', value: 'installed' },
-  { label: '扩展页', value: 'extensions' },
-]
-</script>
-
-<template>
-  <ZSegmented v-model="view" aria-label="插件视图" :options="options" />
-</template>
-```
+<<< @/examples/SegmentedDemo.vue
 
 </template>
 
 </DemoExample>
-
-## 用法说明
-
-每项使用稳定的 `value`，通过控件 `aria-label` 或所属 `ZFormItem` 的标签向辅助技术说明用途
-
-默认宽度由完整标签决定，需要铺满容器时使用 `w-full`。空间不足时在控件内部横向滚动，标签保持单行；选中滑块随选项位置和宽度平滑移动，减少动态效果偏好下立即更新
-
-方向键切换相邻可用选项，Home / End 跳到首尾可用选项，禁用项不参与切换
 
 ## Segmented API {#api}
 

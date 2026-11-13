@@ -4,9 +4,11 @@ import DialogDemo from '../examples/DialogDemo.vue'
 
 # Dialog 弹窗
 
-为需要独立处理的操作提供对话空间
+在浮层中显示内容或处理任务。
 
 ## 基础用法
+
+通过 `v-model` 控制弹窗的显示与隐藏，使用 `title` 设置标题。
 
 <DemoExample>
 
@@ -16,42 +18,11 @@ import DialogDemo from '../examples/DialogDemo.vue'
 
 <template #source>
 
-```vue
-<script setup lang="ts">
-import { ZButton, ZDialog } from '@codex-proxy/ui'
-import { ref } from 'vue'
-
-const open = ref(false)
-</script>
-
-<template>
-  <ZButton @click="open = true">
-    编辑配置
-  </ZButton>
-  <ZDialog v-model="open" title="编辑配置" description="变更在保存后生效">
-    <p>在这里放置表单或其他内容</p>
-    <template #footer>
-      <ZButton @click="open = false">
-        关闭
-      </ZButton>
-    </template>
-  </ZDialog>
-</template>
-```
+<<< @/examples/DialogDemo.vue
 
 </template>
 
 </DemoExample>
-
-## 用法说明
-
-`v-model` 控制开关，`width` 调整宽度，标题描述当前操作
-
-关闭时保留内容直到退出动画结束，随后自动卸载主体与插槽子组件，子组件的局部状态在下次打开时重新创建
-
-调用方的选中对象和表单数据不会随插槽卸载而重置，通常在下次打开时赋值即可，无需额外退出回调。请求、轮询等活动可在打开状态变为 `false` 时取消；确需清除明文凭据或执行其他收尾时，使用 `closed`，避免退场时内容变化
-
-退出期间重新打开会取消本次退场，不触发 `closed`
 
 ## Dialog API {#api}
 
@@ -76,7 +47,7 @@ const open = ref(false)
 
 - `update:modelValue(value: boolean)`：用户关闭请求通过后更新模型
 - `open / close`：打开 / 关闭开始
-- `opened / closed`：入场 / 退场完成，closed 前保留内容、滚动锁与焦点管理
+- `opened / closed`：入场 / 退场完成，退出完成后卸载插槽内容；退出中重新打开不会触发 closed
 
 ### 插槽
 

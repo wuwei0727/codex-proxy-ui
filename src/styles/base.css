@@ -56,6 +56,13 @@
     cursor: pointer;
   }
 
+  input:disabled,
+  textarea:disabled {
+    caret-color: transparent;
+  }
+
+  input:disabled,
+  textarea:disabled,
   button:disabled {
     cursor: not-allowed;
   }

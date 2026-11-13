@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ZCheckbox } from '@codex-proxy/ui/checkbox'
 import { ZPagination } from '@codex-proxy/ui/pagination'
 import { defineTableColumns, useTableColumns, ZTable, ZTableColumnSettings } from '@codex-proxy/ui/table'
 import { computed, shallowRef } from 'vue'
@@ -7,7 +6,6 @@ import DemoPlayground from '../.vitepress/theme/DemoPlayground.vue'
 
 const currentPage = shallowRef(1)
 const pageSize = shallowRef(5)
-const loading = shallowRef(false)
 const rows = Array.from({ length: 26 }, (_, index) => ({ id: index + 1, name: `配置 ${index + 1}`, status: index % 2 ? '已停用' : '已启用' }))
 const columns = defineTableColumns<typeof rows[number]>([
   { key: 'id', label: '序号', kind: 'mono', size: 'xs' },
@@ -26,12 +24,11 @@ function changePageSize(value: number) {
 <template>
   <DemoPlayground wide>
     <div class="flex items-center justify-between gap-3">
-      <ZCheckbox v-model="loading" label="加载状态" />
       <ZTableColumnSettings :options="columnOptions" @change="setColumnVisible" @reorder="setColumnOrder" @reset="resetColumns" />
     </div>
     <div class="h-88">
-      <ZTable :columns="visibleColumns" :data="pageRows" :loading="loading" row-key="id" />
+      <ZTable :columns="visibleColumns" :data="pageRows" row-key="id" />
     </div>
-    <ZPagination v-bind="pagination" :disabled="loading" @current-change="currentPage = $event" @size-change="changePageSize" />
+    <ZPagination v-bind="pagination" @current-change="currentPage = $event" @size-change="changePageSize" />
   </DemoPlayground>
 </template>

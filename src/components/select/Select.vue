@@ -1,13 +1,14 @@
 <script setup lang="ts" generic="Multiple extends boolean = false, Value extends string | number = string">
 import type { SelectEmits, SelectOption, SelectProps, SelectSize, SelectSlots, SelectValue } from './types'
-import { Check, ChevronDown, LoaderCircle, X } from '@lucide/vue'
+import { ChevronDown, LoaderCircle, X } from '@lucide/vue'
+import { useEventListener } from '@vueuse/core'
 import { computed, provide, useAttrs, useTemplateRef, watch } from 'vue'
 import { useLocale } from '../../locale/context'
 import { clearButtonClass } from '../../shared/utils/clear-button'
 import Empty from '../empty/Empty.vue'
 import { useFormField } from '../form/composables/useFormField'
 import { formFieldKey } from '../form/context'
-import Input from '../input/Input.vue'
+import { getInputClasses, inputFieldClass } from '../input/styles'
 import Scrollbar from '../scrollbar/Scrollbar.vue'
 import SelectTags from './components/SelectTags.vue'
 import { useSelect } from './composables/useSelect'
@@ -34,14 +35,12 @@ const locale = useLocale()
 const model = defineModel<SelectValue<Multiple, Value>>({ required: true })
 const attrs = useAttrs()
 const rootRef = useTemplateRef<HTMLElement>('rootRef')
-const triggerRef = useTemplateRef<HTMLButtonElement>('triggerRef')
+const triggerRef = useTemplateRef<HTMLButtonElement | HTMLInputElement>('triggerRef')
 const controlRef = useTemplateRef<HTMLElement>('controlRef')
-const searchInputRef = useTemplateRef<InstanceType<typeof Input>>('searchInput')
-const searchRef = useTemplateRef<HTMLElement>('searchRef')
 const popoverRef = useTemplateRef<HTMLElement>('popoverRef')
 const listboxRef = useTemplateRef<HTMLElement>('listboxRef')
 const scrollbarRef = useTemplateRef<InstanceType<typeof Scrollbar>>('scrollbarRef')
-const { controlId, invalid, describedBy, ariaRequired, validate } = useFormField(attrs)
+const { controlId, invalid, describedBy, ariaRequired, rootAttrs, controlAttrs, validate } = useFormField(attrs)
 const {
   selectId,
   open,
@@ -64,7 +63,7 @@ const {
   handleOptionFocus,
   chooseOption,
   handleEscape,
-} = useSelect(props, model, { rootRef, triggerRef, controlRef, searchRef, searchInputRef, popoverRef, listboxRef, scrollbarRef }, {
+} = useSelect(props, model, { rootRef, triggerRef, controlRef, popoverRef, listboxRef, scrollbarRef }, {
   change(value) {
     emit('change', value)
     validate('change')
@@ -73,67 +72,42 @@ const {
     emit('removeTag', value)
   },
 })
-// 搜索和标签操作属于内部辅助控件，不继承选择字段的身份与校验状态
+// 下拉面板和标签操作属于内部辅助控件，不继承选择字段的身份与校验状态
 provide(formFieldKey, null)
-const rootAttrs = computed(() => ({ class: attrs.class, style: attrs.style }))
-const triggerAttrs = computed(() =>
-  Object.fromEntries(
-    Object.entries(attrs).filter(
-      ([key]) => !['class', 'style', 'id', 'aria-describedby', 'aria-invalid', 'aria-required'].includes(key),
-    ),
-  ),
-)
-
-const sizeConfig: Record<
-  SelectSize,
-  {
-    trigger: string
-    multiple: string
-    option: string
-    icon: number
-  }
-> = {
-  default: {
-    trigger: 'h-z-control px-3.5 pr-9 text-z rounded-z',
-    multiple: 'min-h-z-control py-0.5 pl-2 pr-9 text-z rounded-z',
-    option: 'h-8.5 px-3 text-z',
-    icon: 16,
+const hasTags = computed(() => props.multiple && selectedOptions.value.length > 0)
+const canClear = computed(() => props.clearable && selectedValues.value.length > 0 && !props.disabled)
+const fieldAttrs = computed(() => ({
+  ...controlAttrs.value,
+  'disabled': props.disabled,
+  'role': 'combobox',
+  'aria-expanded': open.value,
+  'aria-controls': open.value ? `${selectId}-listbox` : undefined,
+  'aria-activedescendant': open.value && activeIndex.value >= 0 ? optionId(activeIndex.value) : undefined,
+  'aria-describedby': describedBy.value,
+  'aria-invalid': invalid.value || undefined,
+  'aria-required': ariaRequired.value,
+}) as const)
+const query = computed({
+  get: () => search.value,
+  set(value: string) {
+    void openMenu()
+    search.value = value
+    emit('queryChange', value)
   },
-  small: {
-    trigger: 'h-z-control-sm px-2.5 pr-7 text-xs rounded-z',
-    multiple: 'min-h-z-control-sm py-0 pl-1.5 pr-7 text-xs rounded-z',
-    option: 'h-8 px-2.5 text-xs',
-    icon: 14,
-  },
-  large: {
-    trigger: 'h-z-control-lg px-4 pr-10 text-z-lg rounded-z',
-    multiple: 'min-h-z-control-lg py-1 pl-2.5 pr-10 text-z-lg rounded-z',
-    option: 'h-10 px-3.5 text-z-lg',
-    icon: 17,
-  },
+})
+useEventListener(controlRef, 'click', (event) => {
+  if (!props.filterable || props.disabled || !(event.target instanceof Element) || event.target.closest('button, .z-popover'))
+    return
+  triggerRef.value?.focus()
+  if (event.target.closest('[data-select-indicator]'))
+    toggleMenu()
+  else void openMenu()
+})
+const sizeConfig: Record<SelectSize, { option: string, icon: number }> = {
+  small: { option: 'h-8 px-2.5 text-xs', icon: 14 },
+  default: { option: 'h-8.5 px-3 text-z', icon: 16 },
+  large: { option: 'h-10 px-3.5 text-z-lg', icon: 17 },
 }
-
-const triggerClasses = computed(() => [
-  'relative inline-flex w-full min-w-0 items-center gap-2 overflow-visible border-0 text-left font-emphasis leading-none shadow-z-input outline-none transition-[background-color,box-shadow,color] duration-160',
-  props.multiple ? sizeConfig[props.size].multiple : sizeConfig[props.size].trigger,
-  props.clearable && selectedValues.value.length && !props.disabled ? 'pr-15!' : undefined,
-  props.disabled
-    ? 'cursor-not-allowed bg-z-bg-container-disabled text-z-text-disabled shadow-none'
-    : invalid.value
-      ? [
-          'cursor-pointer bg-z-error-container text-z-error-on-container',
-          open.value
-            ? 'bg-(--z-input-error-active-bg) shadow-z-input-error-active'
-            : 'hover:not-focus-within:bg-(--z-input-error-active-bg) hover:not-focus-within:shadow-z-input-error-active focus-within:bg-(--z-input-error-active-bg) focus-within:shadow-z-input-error-active',
-        ]
-      : open.value
-        ? 'cursor-pointer bg-(--z-input-active-bg) text-z-text shadow-z-input-active'
-        : [
-            'cursor-pointer bg-(--z-input-bg) text-z-text',
-            'hover:not-focus-within:bg-(--z-input-hover-bg) hover:not-focus-within:shadow-z-input-hover',
-            'focus-within:bg-(--z-input-active-bg) focus-within:shadow-z-input-active',
-          ],
-])
 
 function optionClasses(option: SelectOption<Value>, index: number) {
   return [
@@ -162,70 +136,95 @@ defineExpose({ focus: () => triggerRef.value?.focus(), blur: () => triggerRef.va
 
 <template>
   <div ref="rootRef" class="z-select relative inline-block min-w-0 text-left" v-bind="rootAttrs">
-    <div ref="controlRef" class="group/select relative" :class="multiple ? triggerClasses : undefined" :style="{ anchorName: `--${selectId}` }">
+    <div
+      ref="controlRef"
+      class="group/select relative flex w-full items-center gap-2 text-left font-emphasis leading-none"
+      :class="getInputClasses(size, disabled, invalid, { open, inset: hasTags ? 'item' : 'text', trailing: true })"
+      :style="{ anchorName: `--${selectId}` }"
+    >
       <button
-        v-bind="triggerAttrs"
+        v-if="!filterable"
+        v-bind="fieldAttrs"
         :id="controlId"
         ref="triggerRef"
         type="button"
-        :class="multiple ? 'absolute inset-0 size-full rounded-z border-0 bg-transparent p-0 text-inherit outline-none disabled:cursor-not-allowed' : triggerClasses"
-        :disabled="disabled"
-        role="combobox"
-        :aria-expanded="open"
-        :aria-controls="`${selectId}-listbox`"
-        :aria-activedescendant="open && activeIndex >= 0 ? optionId(activeIndex) : undefined"
-        :aria-describedby="describedBy"
-        :aria-invalid="invalid || undefined"
-        :aria-required="ariaRequired"
+        class="absolute inset-0 size-full cursor-pointer rounded-z border-0 bg-transparent p-0 text-inherit outline-none disabled:cursor-not-allowed"
         @click="toggleMenu"
         @focus="emit('focus', $event)"
         @blur="emit('blur', $event); validate('blur')"
         @keydown="handleTriggerKeydown"
       >
-        <span v-if="multiple" :class="selectedOptions.length ? 'sr-only' : 'block px-3 text-left text-z-text-quaternary'">{{ selectionLabel || (placeholder ?? locale.select.placeholder) }}</span>
-        <span v-else class="min-w-0 truncate" :class="selectedOption?.description ? 'max-w-1/2 shrink-0' : 'flex-1'">
+        <span class="sr-only">{{ selectionLabel || (placeholder ?? locale.select.placeholder) }}</span>
+      </button>
+      <div class="pointer-events-none relative flex min-w-0 flex-1 flex-wrap items-center gap-1">
+        <SelectTags
+          v-if="hasTags"
+          :options="selectedOptions"
+          :size="size === 'small' ? 'small' : 'default'"
+          :disabled="disabled"
+          :collapse="collapseTags"
+          :tooltip="collapseTagsTooltip"
+          :limit="maxCollapseTags"
+          :menu-open="open"
+          @remove="removeOption"
+          @focus-control="triggerRef?.focus()"
+        />
+        <input
+          v-if="filterable"
+          v-bind="fieldAttrs"
+          :id="controlId"
+          ref="triggerRef"
+          v-model="query"
+          type="text"
+          autocomplete="off"
+          aria-autocomplete="list"
+          :placeholder="hasTags ? undefined : selectedOption?.label ?? placeholder ?? locale.select.placeholder"
+          class="pointer-events-auto w-0 min-w-[3ch] flex-[1_1_3ch] truncate p-0 placeholder:font-emphasis"
+          :class="[inputFieldClass, selectedOption && !open && !disabled && 'placeholder:text-z-text!', disabled && 'placeholder:text-z-text-disabled!']"
+          @focus="emit('focus', $event)"
+          @blur="emit('blur', $event); validate('blur')"
+          @keydown="handleTriggerKeydown"
+        >
+        <span
+          v-else-if="!hasTags"
+          aria-hidden="true"
+          class="min-w-0 truncate"
+          :class="[selectedOption?.description ? 'max-w-1/2 shrink-0' : 'flex-1', !disabled && !selectedOption && 'text-z-text-quaternary']"
+        >
           {{ selectedOption?.label ?? placeholder ?? locale.select.placeholder }}
         </span>
         <span
-          v-if="!multiple && selectedOption?.description"
+          v-if="selectedOption?.description && !(filterable && open)"
           :title="selectedOption.description"
           class="min-w-0 flex-1 truncate font-normal"
           :class="disabled ? 'text-z-text-disabled' : 'text-z-text-tertiary'"
         >
           {{ selectedOption.description }}
         </span>
+      </div>
+      <span
+        data-select-indicator
+        class="relative inline-grid size-(--field-row) shrink-0 place-items-center"
+        :class="filterable && !disabled ? 'cursor-pointer' : 'pointer-events-none'"
+      >
         <ChevronDown
-          class="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 transition-transform"
-          :class="
-            disabled ? 'text-z-text-disabled' : open ? 'rotate-180 text-z-primary-text' : 'text-z-text-quaternary'
-          "
+          aria-hidden="true"
+          class="pointer-events-none transition-transform motion-reduce:transition-none"
+          :class="[disabled ? 'text-z-text-disabled' : open ? 'rotate-180 text-z-primary-text' : 'text-z-text-quaternary', canClear && !open && 'group-focus-within/select:opacity-0 group-hover/select:opacity-0']"
           :size="sizeConfig[size].icon"
         />
-      </button>
-      <button
-        v-if="clearable && selectedValues.length && !disabled"
-        type="button"
-        :aria-label="locale.select.clear"
-        :class="clearButtonClass"
-        class="pointer-events-none absolute top-1/2 right-8 z-10 -translate-y-1/2 opacity-0 group-focus-within/select:pointer-events-auto group-focus-within/select:opacity-100 group-hover/select:pointer-events-auto group-hover/select:opacity-100"
-        @mousedown.prevent
-        @click.stop="clear"
-      >
-        <X :size="14" />
-      </button>
-      <SelectTags
-        v-if="multiple && selectedOptions.length"
-        class="relative min-w-0 flex-1"
-        :options="selectedOptions"
-        :size="size === 'small' ? 'small' : 'default'"
-        :disabled="disabled"
-        :collapse="collapseTags"
-        :tooltip="collapseTagsTooltip"
-        :limit="maxCollapseTags"
-        :menu-open="open"
-        @remove="removeOption"
-        @focus-control="triggerRef?.focus()"
-      />
+        <button
+          v-if="canClear && !open"
+          type="button"
+          :aria-label="locale.select.clear"
+          :class="clearButtonClass"
+          class="pointer-events-none absolute inset-0 opacity-0 group-focus-within/select:pointer-events-auto group-focus-within/select:opacity-100 group-hover/select:pointer-events-auto group-hover/select:opacity-100"
+          @mousedown.prevent
+          @click.stop="clear"
+        >
+          <X :size="14" />
+        </button>
+      </span>
     </div>
 
     <Teleport to="body">
@@ -240,22 +239,6 @@ defineExpose({ focus: () => triggerRef.value?.focus(), blur: () => triggerRef.va
           class="fixed z-50 rounded-z-lg border-0 bg-z-bg-elevated shadow-z-popover"
           :style="popoverStyle"
         >
-          <div v-if="filterable" ref="searchRef" class="p-2">
-            <Input
-              :id="`${selectId}-search`"
-              ref="searchInput"
-              v-model="search"
-              size="small"
-              :aria-label="locale.select.search"
-              :placeholder="locale.select.searchPlaceholder"
-              role="combobox"
-              aria-expanded="true"
-              :aria-controls="`${selectId}-listbox`"
-              :aria-activedescendant="activeIndex >= 0 ? optionId(activeIndex) : undefined"
-              @input="emit('queryChange', $event)"
-              @keydown="handleTriggerKeydown"
-            />
-          </div>
           <Scrollbar ref="scrollbarRef" :max-height="popoverMaxHeight" class="rounded-z-lg">
             <div
               :id="`${selectId}-listbox`"
@@ -304,11 +287,6 @@ defineExpose({ focus: () => triggerRef.value?.focus(), blur: () => triggerRef.va
                       {{ option.description }}
                     </span>
                   </slot>
-                  <Check
-                    v-if="selectedValues.includes(option.value)"
-                    class="shrink-0 text-z-primary-text"
-                    :size="size === 'small' ? 13 : size === 'large' ? 17 : 15"
-                  />
                 </button>
               </template>
             </div>

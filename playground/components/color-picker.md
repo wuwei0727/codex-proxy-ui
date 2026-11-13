@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import ColorPickerDemo from '../examples/ColorPickerDemo.vue'
+import ColorPickerAlphaDemo from '../examples/ColorPickerAlphaDemo.vue'
 </script>
 
 # ColorPicker 颜色选择
 
-通过色板、预设色或颜色输入选择颜色，确认后更新绑定值
+从色板选择颜色，也可以直接输入色值。
 
 ## 基础用法
+
+使用 `v-model` 绑定颜色字符串，点击确认后更新。
 
 <DemoExample>
 
@@ -16,30 +19,29 @@ import ColorPickerDemo from '../examples/ColorPickerDemo.vue'
 
 <template #source>
 
-```vue
-<script setup lang="ts">
-import { ZColorPicker } from '@codex-proxy/ui'
-import { themeColorPresets } from '@codex-proxy/ui/theme'
-import { ref } from 'vue'
-
-const color = ref('#5983F4')
-const presets = themeColorPresets.map(preset => preset.seed)
-</script>
-
-<template>
-  <ZColorPicker v-model="color" aria-label="主题色" :presets="presets" :allow-alpha="false" />
-</template>
-```
+<<< @/examples/ColorPickerDemo.vue
 
 </template>
 
 </DemoExample>
 
-## 用法说明
+## 透明度
 
-`v-model` 绑定颜色字符串，`presets` 配置快捷色板，`aria-label` 提供可访问名称
+开启 `allow-alpha` 可调整颜色的不透明度。
 
-`allow-alpha` 默认为 `true`，不需要透明度时设为 `false`，`disabled` 禁用交互
+<DemoExample>
+
+<ClientOnly>
+  <ColorPickerAlphaDemo />
+</ClientOnly>
+
+<template #source>
+
+<<< @/examples/ColorPickerAlphaDemo.vue
+
+</template>
+
+</DemoExample>
 
 ## ColorPicker API {#api}
 

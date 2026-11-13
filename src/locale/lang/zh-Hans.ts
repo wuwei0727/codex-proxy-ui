@@ -58,6 +58,8 @@ const locale: UiLocale = {
     increase: label => `增加${label}`,
   },
   input: {
+    moreTags: count => `查看其余 ${count} 个标签`,
+    remainingTags: '其余标签',
     clear: '清空输入',
     content: '内容',
     show: label => `显示${label}`,

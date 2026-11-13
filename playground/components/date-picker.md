@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import DatePickerDemo from '../examples/DatePickerDemo.vue'
+import DatePickerRangeDemo from '../examples/DatePickerRangeDemo.vue'
+import DatePickerTimeDemo from '../examples/DatePickerTimeDemo.vue'
 </script>
 
 # DatePicker 日期选择器
 
-选择日期、周、月份、年份、季度或日期时间，支持多选和范围选择
+选择日期、时间或日期范围。
 
 ## 基础用法
+
+使用 `v-model` 绑定选中的日期。
 
 <DemoExample>
 
@@ -16,49 +20,51 @@ import DatePickerDemo from '../examples/DatePickerDemo.vue'
 
 <template #source>
 
-```vue
-<script setup lang="ts">
-import type { DatePickerValue } from '@codex-proxy/ui/date-picker'
-import { ZDatePicker } from '@codex-proxy/ui/date-picker'
-import { ref } from 'vue'
-
-const dates = ref<DatePickerValue>(null)
-</script>
-
-<template>
-  <ZDatePicker
-    v-model="dates"
-    type="daterange"
-    value-format="YYYY-MM-DD"
-    start-placeholder="开始日期"
-    end-placeholder="结束日期"
-    aria-label="查询日期"
-    :disabled-date="date => date.getTime() > Date.now()"
-  />
-</template>
-```
+<<< @/examples/DatePickerDemo.vue
 
 </template>
 
 </DemoExample>
 
-## 用法说明
+## 日期格式
 
-默认宽度：单值和年份范围 `220px`，月份、季度范围 `300px`，日期范围 `350px`，日期时间范围 `400px`。窄容器内自动收缩，可通过 `class / style` 覆盖宽度
+`format` 控制显示格式，`value-format` 控制绑定值。默认返回 `Date`，使用 `value-format="YYYY-MM-DD"` 返回日期字符串，使用 `x` 返回毫秒时间戳。日期按浏览器本地时区处理。
 
-`ZDatePicker` 支持日期、时间、多选和范围选择，使用本库主题、表单和浮层
+## 日期范围
 
-语言默认继承最近的 `ZConfigProvider`，未配置时使用英文。通过 `locale` 传入 `UiLocale` 语言包可单独覆盖，语言包导入与响应式切换见[国际化](../guide/i18n.md)
+设置 `type="daterange"`，依次选择开始和结束日期。
 
-不设置 `value-format` 时输出 `Date`，设置后输出对应格式的字符串，`value-format="x"` 输出毫秒时间戳数字。范围使用两个值的数组，多选使用数组，清空默认返回 `null`。`format` 只影响输入框的展示与解析
+<DemoExample>
 
-日历按浏览器本地时区选择日期，不转换宿主的部署时区。`default-value` 只设置空值时的日历位置，`default-time` 为日期选择补齐时间，不会自动写入模型
+<ClientOnly>
+  <DatePickerRangeDemo />
+</ClientOnly>
 
-日期范围首次点击只更新草稿，第二次点击确定范围，反向选择自动排序。多选和日期时间保持面板打开，确认或关闭后触发 `change`，外部更新模型不触发用户事件。禁用日期同时限制点击、手动输入和快捷选项，非法输入恢复原值
+<template #source>
 
-范围选择在同一输入框内编辑起止日期。`:clearable="false"` 隐藏清空按钮；不传 `shortcuts` 或传空数组时，不显示左侧快捷选项区
+<<< @/examples/DatePickerRangeDemo.vue
 
-输入框按 ↓ 进入日历，日历支持方向键、Home / End 和 PageUp / PageDown，Shift + PageUp / PageDown 跨年。Enter 选择，Esc 关闭并返回输入框。通过 `ZFormItem` 或 `aria-label` 提供名称
+</template>
+
+</DemoExample>
+
+## 日期时间
+
+设置 `type="datetime"`，可同时选择日期和时间。
+
+<DemoExample>
+
+<ClientOnly>
+  <DatePickerTimeDemo />
+</ClientOnly>
+
+<template #source>
+
+<<< @/examples/DatePickerTimeDemo.vue
+
+</template>
+
+</DemoExample>
 
 ## DatePicker API {#api}
 

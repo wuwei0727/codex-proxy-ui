@@ -41,6 +41,8 @@ export interface UiLocale {
     increase: (label: string) => string
   }
   input: {
+    moreTags?: (count: number) => string
+    remainingTags?: string
     clear: string
     content: string
     show: (label: string) => string
