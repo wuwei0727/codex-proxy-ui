@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { ComponentSize } from '../../shared/types'
 import { useResizeObserver } from '@vueuse/core'
-import { computed, nextTick, shallowRef, useAttrs, useTemplateRef, watch } from 'vue'
+import { nextTick, shallowRef, useAttrs, useTemplateRef, watch } from 'vue'
 import { useFormField } from '../form/composables/useFormField'
+import { getInputClasses } from '../input/styles'
 
 defineOptions({ inheritAttrs: false })
 
@@ -87,27 +88,6 @@ function clear() {
   validate('change')
 }
 defineExpose({ focus: () => textareaRef.value?.focus(), blur: () => textareaRef.value?.blur(), select: () => textareaRef.value?.select(), clear })
-
-const sizeClasses: Record<ComponentSize, string> = {
-  small: 'px-3 py-2.5 text-xs',
-  default: 'px-3.5 py-3 text-z',
-  large: 'px-4 py-3.5 text-z-lg',
-}
-
-const textareaClasses = computed(() => [
-  'z-scrollbar w-full rounded-z border-0 text-z-text shadow-z-input outline-none transition-[background-color,box-shadow,color] duration-160 placeholder:font-normal placeholder:text-z-text-quaternary motion-reduce:transition-none',
-  'leading-[1.55] font-emphasis',
-  sizeClasses[props.size],
-  props.disabled
-    ? 'cursor-not-allowed bg-z-bg-container-disabled text-z-text-disabled shadow-none'
-    : invalid.value
-      ? 'bg-z-error-container hover:not-focus:bg-(--z-input-error-active-bg) hover:not-focus:shadow-z-input-error-active focus:bg-(--z-input-error-active-bg) focus:shadow-z-input-error-active'
-      : [
-          'bg-(--z-input-bg)',
-          'hover:not-focus:bg-(--z-input-hover-bg) hover:not-focus:shadow-z-input-hover',
-          'focus:bg-(--z-input-active-bg) focus:shadow-z-input-active',
-        ],
-])
 </script>
 
 <template>
@@ -117,7 +97,8 @@ const textareaClasses = computed(() => [
       :id="controlId"
       ref="textarea"
       :value="model"
-      :class="textareaClasses"
+      class="z-scrollbar w-full font-emphasis leading-(--field-row) placeholder:font-normal placeholder:text-z-text-quaternary"
+      :class="getInputClasses(size, disabled, invalid)"
       :style="{ resize: disabled || autosize ? 'none' : resize }"
       :rows="rows"
       :placeholder="placeholder"

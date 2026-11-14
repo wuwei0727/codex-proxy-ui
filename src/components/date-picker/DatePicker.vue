@@ -67,7 +67,7 @@ const inputs = useTemplateRef<HTMLInputElement[]>('inputs')
 const calendars = useTemplateRef<InstanceType<typeof DatePickerCalendar>[]>('calendars')
 const panel = useTemplateRef<HTMLElement>('panel')
 const inputRoot = useTemplateRef<HTMLElement>('inputRoot')
-const inputClasses = computed(() => getInputClasses(props.size, props.disabled, invalid.value))
+const inputClasses = computed(() => getInputClasses(props.size, props.disabled, invalid.value, { open: open.value, trailing: Boolean(props.clearable && hasValue.value && !blocked.value) }))
 const controlLabel = computed(() => typeof attrs['aria-label'] === 'string' ? attrs['aria-label'] : locale.value.datePicker.label)
 const panelDates = computed(() => range.value && !props.singlePanel ? anchors.value : anchors.value.slice(0, 1))
 const fields = computed(() => range.value ? [props.startPlaceholder ?? locale.value.datePicker.startPlaceholder, props.endPlaceholder ?? locale.value.datePicker.endPlaceholder] : [props.placeholder ?? locale.value.datePicker.placeholder])
@@ -143,7 +143,7 @@ async function keydown(event: KeyboardEvent) {
 <template>
   <Popover v-bind="rootAttrs" v-model="open" class="z-date-picker" transition="z-slide-fade" :data-type="type" :disabled="blocked" :placement="placement" :offset="10" :teleported="teleported" @open="restoringFocus = false" @close="restoringFocus = true" @closed="restoringFocus = false">
     <template #reference="{ id }">
-      <div ref="inputRoot" :class="inputClasses">
+      <div ref="inputRoot" class="relative inline-flex w-full items-center gap-2" :class="inputClasses">
         <component :is="prefixIcon || (time ? Clock : CalendarDays)" class="size-4 shrink-0" :class="disabled ? 'text-z-text-disabled' : invalid ? 'text-z-error' : 'text-z-text-quaternary'" />
         <template v-for="(placeholder, index) in fields" :key="index">
           <span v-if="index" class="shrink-0 text-z-xs text-z-text-tertiary"><slot name="range-separator">{{ rangeSeparator }}</slot></span>

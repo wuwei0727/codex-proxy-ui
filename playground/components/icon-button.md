@@ -4,9 +4,11 @@ import IconButtonDemo from '../examples/IconButtonDemo.vue'
 
 # IconButton 图标按钮
 
-在紧凑空间中呈现单一操作
+用一个图标表示按钮操作。
 
 ## 基础用法
+
+将图标放入默认插槽，通过 `aria-label` 说明按钮用途。
 
 <DemoExample>
 
@@ -16,33 +18,11 @@ import IconButtonDemo from '../examples/IconButtonDemo.vue'
 
 <template #source>
 
-```vue
-<script setup lang="ts">
-import { ZIconButton } from '@codex-proxy/ui'
-import { ref } from 'vue'
-
-const count = ref(0)
-</script>
-
-<template>
-  <ZIconButton aria-label="刷新配置" @click="count++">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-      <path d="M20 7v5h-5M4 17v-5h5M6.1 6.1A8 8 0 0 1 20 12M4 12a8 8 0 0 0 13.9 5.9" />
-    </svg>
-  </ZIconButton>
-  <output aria-label="刷新次数">{{ count }}</output>
-</template>
-```
+<<< @/examples/IconButtonDemo.vue
 
 </template>
 
 </DemoExample>
-
-## 用法说明
-
-使用 `aria-label` 提供可访问名称，组件不会据此生成原生提示。需要可见说明时组合 `ZPopover`；原生提示可通过 `title` 显式传入
-
-内置加载图标与未指定尺寸的 Lucide 图标随 `size` 缩放，自定义 SVG 的尺寸由调用方设置
 
 ## IconButton API {#api}
 

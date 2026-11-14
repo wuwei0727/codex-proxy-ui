@@ -4,11 +4,13 @@ import CardDemo from '../examples/CardDemo.vue'
 
 # Card 卡片
 
-组织同一主题的标题、说明与内容
+将相关内容放在同一张卡片中。
 
 ## 基础用法
 
-<DemoExample>
+通过默认插槽放置内容，使用 `actions` 插槽添加卡片操作。
+
+<DemoExample wide>
 
 <ClientOnly>
   <CardDemo />
@@ -16,27 +18,11 @@ import CardDemo from '../examples/CardDemo.vue'
 
 <template #source>
 
-```vue
-<script setup lang="ts">
-import { ZCard } from '@codex-proxy/ui'
-</script>
-
-<template>
-  <ZCard title="请求工作台" description="管理页面与请求中间件">
-    <p>将相关内容放在同一张卡片中</p>
-  </ZCard>
-</template>
-```
+<<< @/examples/CardDemo.vue
 
 </template>
 
 </DemoExample>
-
-## 用法说明
-
-`padding` 控制内容间距，`actions` 插槽承载卡片操作。标题和操作区放不下时换行，操作区最大宽度为卡片内容宽度；内容需要完整展示时避免固定卡片高度
-
-卡片表面由主题统一控制：默认预设使用纯色与轻量阴影，`soft` 预设使用表面高光与分层阴影，业务组件无需设置额外属性
 
 ## Card API {#api}
 

@@ -29,7 +29,7 @@ Vue 3 · TypeScript · 按需导入 · 主题定制 · 国际化
 需要 Vue 3.5+、Node.js 24+
 
 ```bash
-pnpm add https://github.com/zyycn/codex-proxy-ui/releases/download/v0.10.0/codex-proxy-ui-0.10.0.tgz
+pnpm add https://github.com/zyycn/codex-proxy-ui/releases/download/v0.11.0/codex-proxy-ui-0.11.0.tgz
 ```
 
 包名为 `@codex-proxy/ui`，通过 [GitHub Releases](https://github.com/zyycn/codex-proxy-ui/releases) 分发，尚未发布到 npm registry。每个版本提供 `.tgz` 安装包与 `.sha256` 校验文件，提交应用锁文件以固定版本和完整性摘要

@@ -4,11 +4,13 @@ import ConfirmDialogDemo from '../examples/ConfirmDialogDemo.vue'
 
 # ConfirmDialog 确认弹窗
 
-提供一致的确认与取消入口，用于需要用户确认的操作
+在执行操作前请求确认。
 
 ## 基础用法
 
-<DemoExample>
+监听 `confirm` 执行操作，成功后将 `v-model` 设为 `false`。
+
+<DemoExample wide>
 
 <ClientOnly>
   <ConfirmDialogDemo />
@@ -16,49 +18,11 @@ import ConfirmDialogDemo from '../examples/ConfirmDialogDemo.vue'
 
 <template #source>
 
-```vue
-<script setup lang="ts">
-import { ZButton, ZConfirmDialog } from '@codex-proxy/ui'
-import { ref } from 'vue'
-
-const open = ref(false)
-const removed = ref(false)
-
-function confirm() {
-  removed.value = true
-  open.value = false
-}
-</script>
-
-<template>
-  <ZButton type="danger" variant="plain" @click="open = true">
-    移除示例项
-  </ZButton>
-  <ZConfirmDialog
-    v-model="open"
-    title="移除示例项"
-    description="此操作仅更新本地演示状态"
-    destructive
-    confirm-text="移除"
-    @confirm="confirm"
-  />
-  <output aria-label="操作结果">{{ removed ? '已移除' : '尚未移除' }}</output>
-</template>
-```
+<<< @/examples/ConfirmDialogDemo.vue
 
 </template>
 
 </DemoExample>
-
-## 用法说明
-
-`v-model` 控制显隐，`title` 与 `description` 说明操作，`destructive` 强调危险行为
-
-监听 `confirm` 执行操作，成功后由调用方关闭弹窗；异步操作期间设置 `loading`，以避免重复提交
-
-确认对象与提示内容在退出期间保持不变，内部内容在动画结束后自动卸载。调用方可在下次打开时替换确认对象，仅在需要额外收尾时监听 `closed`
-
-`confirm-text`、`cancel-text` 定义按钮文案，`confirm-disabled` 禁用确认
 
 ## ConfirmDialog API {#api}
 

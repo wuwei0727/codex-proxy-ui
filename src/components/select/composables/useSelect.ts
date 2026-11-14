@@ -9,10 +9,9 @@ import { useSelectPosition } from './useSelectPosition'
 
 interface SelectElements extends SelectPositionElements {
   rootRef: Ref<HTMLElement | null>
-  triggerRef: Ref<HTMLButtonElement | null>
+  triggerRef: Ref<HTMLButtonElement | HTMLInputElement | null>
   popoverRef: Ref<HTMLElement | null>
   scrollbarRef: Ref<InstanceType<typeof Scrollbar> | null>
-  searchInputRef: Ref<{ focus: () => void } | null>
 }
 
 export function useSelect<Multiple extends boolean, Value extends SelectOptionValue>(
@@ -21,7 +20,7 @@ export function useSelect<Multiple extends boolean, Value extends SelectOptionVa
   elements: SelectElements,
   callbacks: { change: (value: SelectValue<Multiple, Value>) => void, removeTag: (value: Value) => void },
 ) {
-  const { rootRef, triggerRef, popoverRef, listboxRef, scrollbarRef, searchInputRef } = elements
+  const { rootRef, triggerRef, popoverRef, listboxRef, scrollbarRef } = elements
   const search = ref('')
   const open = ref(false)
   const activeIndex = ref(-1)
@@ -85,18 +84,19 @@ export function useSelect<Multiple extends boolean, Value extends SelectOptionVa
     if (props.disabled || open.value)
       return
 
-    search.value = ''
     open.value = true
+    if (props.filterable)
+      triggerRef.value?.focus()
     setActiveToSelected()
     await nextTick()
     updatePopoverPosition()
     await nextTick()
     scrollActiveIntoView()
-    searchInputRef.value?.focus()
   }
 
   function closeMenu() {
     open.value = false
+    search.value = ''
   }
 
   function toggleMenu() {
@@ -176,7 +176,7 @@ export function useSelect<Multiple extends boolean, Value extends SelectOptionVa
   }
 
   function handleTriggerKeydown(event: KeyboardEvent) {
-    if (props.disabled || event.isComposing)
+    if (props.disabled || event.isComposing || event.keyCode === 229)
       return
 
     if (event.key === 'ArrowDown') {
@@ -212,11 +212,8 @@ export function useSelect<Multiple extends boolean, Value extends SelectOptionVa
 
     if (event.key === 'Escape')
       handleEscape(event)
-    if (event.key === 'Tab') {
-      if (searching)
-        triggerRef.value?.focus()
+    if (event.key === 'Tab')
       closeMenu()
-    }
   }
 
   watch(
@@ -242,7 +239,7 @@ export function useSelect<Multiple extends boolean, Value extends SelectOptionVa
     await nextTick()
     // 重试操作结束后其按钮会卸载，将键盘焦点交还给仍存在的选择控件。
     if (open.value && (document.activeElement === document.body || popoverRef.value?.contains(document.activeElement)))
-      (searchInputRef.value ?? triggerRef.value)?.focus()
+      triggerRef.value?.focus()
   })
   watch(() => props.disabled, (disabled) => {
     if (disabled)

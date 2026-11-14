@@ -1,8 +1,6 @@
 # 组件总览
 
-按主组件查找交互示例，配置区只调整当前组件。分页可独立使用，表格页提供分页与列设置的组合示例
-
-用法代码可复制为独立 Vue 单文件组件，先按[安装指南](../guide/installation.md)接入样式与主题，API 默认值以组件自身定义为准
+浏览组件示例与 API。首次使用请参阅[安装指南](../guide/installation.md)。
 
 ## 基础
 
@@ -31,6 +29,7 @@
 | [ZForm](./form.md)                | 表单布局与提交           |
 | [ZFormItem](./form.md)            | 字段标签、提示与校验信息 |
 | [ZInput](./input.md)              | 单行文本输入             |
+| [ZInputTag](./input-tag.md)       | 逐条录入文本标签         |
 | [ZInputNumber](./input-number.md) | 数值输入与步进操作       |
 | [ZTextarea](./textarea.md)        | 多行文本输入             |
 | [ZSelect](./select.md)            | 选项列表与选择           |

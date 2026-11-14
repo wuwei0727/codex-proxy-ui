@@ -4,9 +4,11 @@ import PopoverDemo from '../examples/PopoverDemo.vue'
 
 # Popover 气泡
 
-在锚点附近展示补充说明或轻量操作
+在触发元素旁展示补充内容。
 
 ## 基础用法
+
+将触发元素放入 `reference` 插槽，通过 `trigger` 设置点击或悬停打开。
 
 <DemoExample>
 
@@ -16,36 +18,11 @@ import PopoverDemo from '../examples/PopoverDemo.vue'
 
 <template #source>
 
-```vue
-<script setup lang="ts">
-import { ZButton, ZPopover } from '@codex-proxy/ui'
-</script>
-
-<template>
-  <ZPopover placement="bottom" trigger="click">
-    <template #reference>
-      <ZButton>授权说明</ZButton>
-    </template>
-    <p style="margin: 0; padding: 8px 12px">
-      插件只会使用已明确授予的权限
-    </p>
-  </ZPopover>
-</template>
-```
+<<< @/examples/PopoverDemo.vue
 
 </template>
 
 </DemoExample>
-
-## 用法说明
-
-`placement` 设置位置，`trigger` 决定点击或悬停触发，`offset` 控制与锚点的距离
-
-悬停触发时，`enterable` 默认允许鼠标移入浮层，`show-after / hide-after` 控制打开和关闭延迟。触发区放在 `reference` 插槽中，`reference-element` 只负责定位；宿主无需另写鼠标离开时的关闭逻辑
-
-默认正文使用主题字号，触发容器按内容宽度定位。整页和嵌套容器滚动时，面板与 Select 下拉一样跟随锚点；支持原生锚点定位的浏览器直接处理跟随，其余浏览器通过滚动事件更新坐标
-
-`placement`、`offset` 和 `reference-element` 变化时重新计算位置，空间不足时自动翻转并限制在视口内
 
 ## Popover API {#api}
 

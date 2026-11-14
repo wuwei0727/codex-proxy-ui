@@ -4,9 +4,11 @@ import EmptyDemo from '../examples/EmptyDemo.vue'
 
 # Empty 空状态
 
-在没有内容时说明状态并给出下一步操作
+在没有数据时显示占位内容。
 
 ## 基础用法
+
+使用 `description` 说明原因，通过 `action` 插槽添加操作。
 
 <DemoExample>
 
@@ -16,23 +18,11 @@ import EmptyDemo from '../examples/EmptyDemo.vue'
 
 <template #source>
 
-```vue
-<script setup lang="ts">
-import { ZEmpty } from '@codex-proxy/ui'
-</script>
-
-<template>
-  <ZEmpty title="暂无插件" description="安装插件后即可开始配置" />
-</template>
-```
+<<< @/examples/EmptyDemo.vue
 
 </template>
 
 </DemoExample>
-
-## 用法说明
-
-通过 `description` 补充原因，`action` 插槽提供相关操作
 
 ## Empty API {#api}
 

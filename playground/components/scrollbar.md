@@ -4,11 +4,13 @@ import ScrollbarDemo from '../examples/ScrollbarDemo.vue'
 
 # Scrollbar 滚动容器
 
-使用原生滚动行为，统一滚动条外观与内容区域尺寸
+在有限的空间内滚动查看内容。
 
 ## 基础用法
 
-<DemoExample>
+设置 `height` 或 `max-height` 限制高度，通过 `horizontal` 开启横向滚动。
+
+<DemoExample wide>
 
 <ClientOnly>
   <ScrollbarDemo />
@@ -16,37 +18,11 @@ import ScrollbarDemo from '../examples/ScrollbarDemo.vue'
 
 <template #source>
 
-```vue
-<script setup lang="ts">
-import { ZScrollbar } from '@codex-proxy/ui'
-import { ref } from 'vue'
-
-const scrollTop = ref(0)
-</script>
-
-<template>
-  <ZScrollbar height="224px" horizontal @scroll="scrollTop = $event.scrollTop">
-    <div style="min-width: 600px">
-      <p v-for="index in 20" :key="index">
-        示例内容 {{ index }}
-      </p>
-    </div>
-  </ZScrollbar>
-  <output aria-label="滚动位置">已滚动 {{ Math.round(scrollTop) }} px</output>
-</template>
-```
+<<< @/examples/ScrollbarDemo.vue
 
 </template>
 
 </DemoExample>
-
-## 用法说明
-
-`height` 或 `maxHeight` 约束容器高度，`horizontal` 开启横向滚动，`vertical` 默认开启
-
-`alwaysVisible` 控制滚动条常显，`scroll` 事件返回 `scrollTop` 与 `scrollLeft`
-
-滚动由原生容器处理，滚动条隐藏时不接收鼠标操作；自定义轨道只处理点击与拖动
 
 ## 页面与外部容器
 

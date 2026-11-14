@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import TagDemo from '../examples/TagDemo.vue'
+import TagCloseDemo from '../examples/TagCloseDemo.vue'
 </script>
 
 # Tag 标签
 
-用短标签呈现状态与分类
+用标签标记状态或分类。
 
 ## 基础用法
+
+使用默认插槽设置标签文字。
 
 <DemoExample>
 
@@ -16,33 +19,29 @@ import TagDemo from '../examples/TagDemo.vue'
 
 <template #source>
 
-```vue
-<script setup lang="ts">
-import { ZButton, ZTag } from '@codex-proxy/ui'
-import { ref } from 'vue'
-
-const visible = ref(true)
-</script>
-
-<template>
-  <ZTag v-if="visible" type="success" closable @close="visible = false">
-    已启用
-  </ZTag>
-  <ZButton v-else @click="visible = true">
-    恢复标签
-  </ZButton>
-</template>
-```
+<<< @/examples/TagDemo.vue
 
 </template>
 
 </DemoExample>
 
-## 用法说明
+## 可移除标签
 
-标签默认按内容宽度展示，放入网格时也不自动拉满；开启关闭按钮不改变对应尺寸的高度
+设置 `closable`，在 `close` 事件中更新标签列表。
 
-`closable` 发出关闭事件，由调用方决定是否移除标签
+<DemoExample>
+
+<ClientOnly>
+  <TagCloseDemo />
+</ClientOnly>
+
+<template #source>
+
+<<< @/examples/TagCloseDemo.vue
+
+</template>
+
+</DemoExample>
 
 ## Tag API {#api}
 

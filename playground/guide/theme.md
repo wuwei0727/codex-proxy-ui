@@ -45,7 +45,7 @@ JavaScript 中使用 `getThemeVarName('color-primary')` 获取当前前缀下的
 
 完整预设使用 `createTheme({ colorId, ...themeProfiles[colorId], scheme })`。预设可以声明任意 `ThemeCustomization`；内置预设只配置材质与尺寸。编辑器用 `resolveThemeProfile(colorId, customization.seed)` 切换预设：预设显式声明的颜色生效，其余保留用户的设置
 
-切换品牌配色或自定义主色不改变成功、警告、错误、信息与链接色。背景和文字基色默认随明暗模式切换；显式覆盖其中一项后，两个模式均使用该值
+切换配色不改写功能色与中性色 Seed。页面和容器可使用内置配色的明暗底色；显式设置 `customization.seed.colorBgBase` 时，两个模式都优先使用该值。自定义主色不提供预设底色
 
 `default` 保留简洁表面，`soft` 提供表面高光、渐变与分层阴影。材质不改变圆角、字号或组件尺寸，这些值由 Seed 与组件配置决定。Card 等基础组件自动消费对应 Token，无需业务页面判断主题
 

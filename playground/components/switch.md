@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import SwitchDemo from '../examples/SwitchDemo.vue'
+import SwitchTextDemo from '../examples/SwitchTextDemo.vue'
 </script>
 
 # Switch 开关
 
-即时切换启用或停用状态
+切换两种互斥状态。
 
 ## 基础用法
+
+使用 `v-model` 绑定开关值。
 
 <DemoExample>
 
@@ -16,26 +19,29 @@ import SwitchDemo from '../examples/SwitchDemo.vue'
 
 <template #source>
 
-```vue
-<script setup lang="ts">
-import { ZSwitch } from '@codex-proxy/ui'
-import { ref } from 'vue'
-
-const enabled = ref(true)
-</script>
-
-<template>
-  <ZSwitch v-model="enabled" label="启用配置" active-text="开" inactive-text="关" inline-prompt />
-</template>
-```
+<<< @/examples/SwitchDemo.vue
 
 </template>
 
 </DemoExample>
 
-## 用法说明
+## 文字描述
 
-通过 `active-text`、`inactive-text` 描述状态，`inline-prompt` 将文字放入开关内部
+设置 `inline-prompt`，将两种状态的文字显示在开关内。
+
+<DemoExample>
+
+<ClientOnly>
+  <SwitchTextDemo />
+</ClientOnly>
+
+<template #source>
+
+<<< @/examples/SwitchTextDemo.vue
+
+</template>
+
+</DemoExample>
 
 ## Switch API {#api}
 

@@ -4,11 +4,13 @@ import SkeletonDemo from '../examples/SkeletonDemo.vue'
 
 # Skeleton 骨架屏
 
-在内容到达前保留页面的主要形状
+在加载期间显示内容的轮廓。
 
 ## 基础用法
 
-<DemoExample>
+通过 `shape` 和尺寸组合占位元素，使用 `animated` 开启动画。
+
+<DemoExample wide>
 
 <ClientOnly>
   <SkeletonDemo />
@@ -16,27 +18,11 @@ import SkeletonDemo from '../examples/SkeletonDemo.vue'
 
 <template #source>
 
-```vue
-<script setup lang="ts">
-import { ZSkeleton } from '@codex-proxy/ui'
-</script>
-
-<template>
-  <div style="display: grid; gap: 12px">
-    <ZSkeleton shape="circle" style="width: 48px; height: 48px" />
-    <ZSkeleton shape="text" style="width: 160px" />
-    <ZSkeleton shape="text" style="width: 240px; max-width: 100%" />
-  </div>
-</template>
-```
+<<< @/examples/SkeletonDemo.vue
 
 </template>
 
 </DemoExample>
-
-## 用法说明
-
-使用 `shape` 与尺寸组合占位，`animated` 控制动画
 
 ## Skeleton API {#api}
 

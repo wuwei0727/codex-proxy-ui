@@ -4,11 +4,13 @@ import PaginationDemo from '../examples/PaginationDemo.vue'
 
 # Pagination 分页
 
-独立控制页码与每页条数，表格和其他列表共用
+将较长的列表分成多页。
 
 ## 基础用法
 
-<DemoExample>
+绑定 `current-page` 和 `page-size`，通过 `total` 设置总条数。
+
+<DemoExample wide>
 
 <ClientOnly>
   <PaginationDemo />
@@ -16,19 +18,7 @@ import PaginationDemo from '../examples/PaginationDemo.vue'
 
 <template #source>
 
-```vue
-<script setup lang="ts">
-import { ZPagination } from '@codex-proxy/ui/pagination'
-import { ref } from 'vue'
-
-const page = ref(1)
-const size = ref(20)
-</script>
-
-<template>
-  <ZPagination v-model:current-page="page" v-model:page-size="size" :total="123" />
-</template>
-```
+<<< @/examples/PaginationDemo.vue
 
 </template>
 

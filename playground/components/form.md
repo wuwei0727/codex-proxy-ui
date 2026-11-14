@@ -4,11 +4,13 @@ import FormDemo from '../examples/FormDemo.vue'
 
 # Form 表单
 
-组合相关字段，统一标签、说明与校验状态
+收集和校验表单数据。
 
 ## 基础用法
 
-<DemoExample>
+将字段放在 `ZFormItem` 中，使用 `v-model` 绑定表单数据。
+
+<DemoExample wide>
 
 <ClientOnly>
   <FormDemo />
@@ -16,68 +18,19 @@ import FormDemo from '../examples/FormDemo.vue'
 
 <template #source>
 
-```vue
-<script setup lang="ts">
-import type { FormInstance, FormRules } from '@codex-proxy/ui'
-import { ZButton, ZForm, ZFormItem, ZInput } from '@codex-proxy/ui'
-import { reactive, useTemplateRef } from 'vue'
-
-interface RuleForm { name: string }
-const emit = defineEmits<{ save: [value: RuleForm] }>()
-const form = useTemplateRef<FormInstance>('form')
-const model = reactive<RuleForm>({ name: '' })
-const rules = reactive<FormRules<RuleForm>>({
-  name: [
-    { required: true, message: '请填写名称', trigger: 'blur' },
-    { min: 3, max: 12, message: '名称长度为 3 到 12 个字符', trigger: 'blur' },
-  ],
-})
-async function save() {
-  const valid = await form.value?.validate().catch(() => false)
-  if (!valid)
-    return
-  emit('save', { ...model })
-}
-</script>
-
-<template>
-  <ZForm ref="form" :model="model" :rules="rules" label-position="right" label-width="100px" scroll-to-error focus-on-error novalidate @submit="save">
-    <ZFormItem prop="name" label="名称">
-      <ZInput v-model="model.name" />
-    </ZFormItem>
-    <ZButton native-type="submit">
-      保存
-    </ZButton>
-    <ZButton @click="form?.resetFields()">
-      重置
-    </ZButton>
-  </ZForm>
-</template>
-```
+<<< @/examples/FormDemo.vue
 
 </template>
 
 </DemoExample>
 
-## 标签与错误反馈
+## 标签对齐
 
-`label-position` 支持 `left`、`right`、`top`，分别表示左对齐、右对齐和顶部标签。FormItem 可独立设置，空值继承 Form；Form 默认 `top`
-
-横向布局通过 `label-width` 设置标签列宽度，数字按 px 处理，`auto` 按同一表单中标签的最大宽度对齐。FormItem 可覆盖列宽；窄屏可由调用方切换为 `top`
-
-单控件自动关联标签和控件 ID；多控件使用组标签，各控件需要自己的可访问名称。`for` 可显式指定标签关联的控件，辅助按钮放在 `label-extra` 或 `extra`
-
-顶部标签与控件间距为 8px。错误提示绝对定位在控件下方，不改变字段和表单高度，使用公共 `z-zoom-in-top` 过渡。字段之间保留至少 18px 间距，ZForm 默认提供此间距；长错误单行省略，完整内容通过 `title` 和 `aria-describedby` 提供
+设置 `label-position` 调整标签位置。水平布局使用 `label-width="auto"` 可按最长标签对齐。多个控件共用一个标签时，需分别提供可访问名称。
 
 ## 校验规则
 
-`FormRules<T>` 按模型字段路径声明规则，支持单条规则或数组，使用 `@rc-component/async-validator` 执行校验
-
-规则支持 `required`、`type`、`min / max / len`、`pattern`、`enum`、`whitespace`、`transform`、`fields / defaultField`、`message`、`validator / asyncValidator`。具体取值与校验语义参见 [规则说明](https://github.com/react-component/async-validator#rules)
-
-`trigger` 为事件名或事件数组，控件提供 `blur`、`change`；未设置时两者都执行。主动调用 `validate / validateField` 会检查全部规则
-
-自定义校验接收 `(rule, value, callback, source, options)`，可通过 `callback(new Error(message))` 报错；`asyncValidator` 也可返回 Promise。跨字段校验从业务模型读取关联值，`source` 是当前字段的校验输入
+通过 `rules` 设置[校验规则](https://github.com/react-component/async-validator#rules)，使用 `trigger` 指定 `blur` 或 `change`。调用 `validate()` 可检查整个表单。
 
 ## Form API {#api}
 

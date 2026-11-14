@@ -1,10 +1,15 @@
 <script setup lang="ts">
 import { CodeXml } from '@lucide/vue'
+import DemoPlayground from './DemoPlayground.vue'
+
+defineProps<{ wide?: boolean }>()
 </script>
 
 <template>
   <div class="docs-example">
-    <slot />
+    <DemoPlayground :wide="wide">
+      <slot />
+    </DemoPlayground>
     <details v-if="$slots.source" class="docs-example-source">
       <summary>
         <CodeXml :size="16" aria-hidden="true" />

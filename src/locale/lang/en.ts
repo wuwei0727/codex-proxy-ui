@@ -58,6 +58,8 @@ const locale: UiLocale = {
     increase: label => `Increase ${label}`,
   },
   input: {
+    moreTags: count => `Show ${count} more ${count === 1 ? 'tag' : 'tags'}`,
+    remainingTags: 'More tags',
     clear: 'Clear input',
     content: 'content',
     show: label => `Show ${label}`,

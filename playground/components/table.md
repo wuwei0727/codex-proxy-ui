@@ -5,11 +5,13 @@ import TableToolsDemo from '../examples/TableToolsDemo.vue'
 
 # Table 表格
 
-展示结构化数据，支持自定义列、行选择、展开内容和列设置
+以行和列展示数据。
 
 ## 基础用法
 
-<DemoExample>
+通过 `columns` 定义列，使用 `data` 提供行数据。
+
+<DemoExample wide>
 
 <ClientOnly>
   <TableDemo />
@@ -17,37 +19,11 @@ import TableToolsDemo from '../examples/TableToolsDemo.vue'
 
 <template #source>
 
-```vue
-<script setup lang="ts">
-import { defineTableColumns, ZTable } from '@codex-proxy/ui'
-
-const rows = [
-  { id: 'workbench', name: '请求工作台', version: '0.1.0' },
-  { id: 'inspector', name: '请求检查器', version: '0.2.1' },
-]
-const columns = defineTableColumns<typeof rows[number]>([
-  { key: 'name', label: '插件', kind: 'identity' },
-  { key: 'version', label: '版本', kind: 'mono', size: 'sm' },
-])
-</script>
-
-<template>
-  <div style="height: 280px">
-    <ZTable :columns="columns" :data="rows" row-key="id" />
-  </div>
-</template>
-```
+<<< @/examples/TableDemo.vue
 
 </template>
 
 </DemoExample>
-
-## 用法说明
-
-`columns` 描述列，`data` 提供数据，`row-key` 保持行身份稳定
-
-`loading` 显示内置加载反馈，无需注册指令，刷新时会保留已有数据
-`show-header-when-empty` 控制空数据和初次加载时是否保留表头
 
 ## 分页与列设置 {#configuration}
 
@@ -101,8 +77,6 @@ function changePageSize(value: number) {
 `ZTableColumnSettings` 的 `options` 描述列，`change`、`reorder`、`reset` 处理显隐、顺序与恢复默认
 
 与 `useTableColumns` 配合，可按独立的 `tableId` 在本地保留列偏好，设置 `hideable: false` 保留必要列
-
-示例只保存自己的列偏好，点击列设置中的恢复按钮可清除
 
 ## Table API {#api}
 

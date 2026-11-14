@@ -4,11 +4,13 @@ import MenuItemDemo from '../examples/MenuItemDemo.vue'
 
 # MenuItem 菜单项
 
-用于操作列表，可组合图标、禁用、加载与危险操作
+在菜单中展示可执行的操作。
 
 ## 基础用法
 
-<DemoExample>
+在默认插槽中填写操作名称，使用 `icon` 插槽添加图标。
+
+<DemoExample wide>
 
 <ClientOnly>
   <MenuItemDemo />
@@ -16,34 +18,11 @@ import MenuItemDemo from '../examples/MenuItemDemo.vue'
 
 <template #source>
 
-```vue
-<script setup lang="ts">
-import { ZMenuItem } from '@codex-proxy/ui'
-import { ref } from 'vue'
-
-const action = ref('尚未操作')
-</script>
-
-<template>
-  <ZMenuItem @click="action = '编辑'">
-    编辑
-  </ZMenuItem>
-  <ZMenuItem type="danger" @click="action = '移除'">
-    移除
-  </ZMenuItem>
-  <output aria-label="当前操作">{{ action }}</output>
-</template>
-```
+<<< @/examples/MenuItemDemo.vue
 
 </template>
 
 </DemoExample>
-
-## 用法说明
-
-默认插槽提供操作文字，`icon` 插槽放置图标，`type="danger"` 标识危险操作
-
-`disabled` 与 `loading` 阻止点击，组件是按钮，不负责菜单容器的定位与开关
 
 ## MenuItem API {#api}
 

@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import SliderDemo from '../examples/SliderDemo.vue'
+import SliderDisabledDemo from '../examples/SliderDisabledDemo.vue'
 </script>
 
 # Slider 滑块
 
-连续调节数值，支持键盘操作、步长和禁用状态
+在指定范围内拖动选择数值。
 
 ## 基础用法
+
+使用 `v-model` 绑定数值，通过 `step` 设置步长。
 
 <DemoExample>
 
@@ -16,28 +19,29 @@ import SliderDemo from '../examples/SliderDemo.vue'
 
 <template #source>
 
-```vue
-<script setup lang="ts">
-import { ZSlider } from '@codex-proxy/ui'
-import { ref } from 'vue'
-
-const opacity = ref(60)
-</script>
-
-<template>
-  <ZSlider v-model="opacity" aria-label="透明度" :min="0" :max="100" :step="5" unit="%" />
-</template>
-```
+<<< @/examples/SliderDemo.vue
 
 </template>
 
 </DemoExample>
 
-## 用法说明
+## 禁用状态
 
-`v-model` 绑定数值，`min`、`max`、`step` 定义可选范围
+设置 `disabled` 禁止调整数值。
 
-通过 `aria-label` 说明调节用途，`unit` 补充读屏数值单位，`disabled` 禁用交互
+<DemoExample>
+
+<ClientOnly>
+  <SliderDisabledDemo />
+</ClientOnly>
+
+<template #source>
+
+<<< @/examples/SliderDisabledDemo.vue
+
+</template>
+
+</DemoExample>
 
 ## Slider API {#api}
 

@@ -4,11 +4,13 @@ import SidebarDemo from '../examples/SidebarDemo.vue'
 
 # Sidebar 侧边栏
 
-组合品牌区、可滚动导航与底部操作，支持展开、收起和两级菜单
+使用侧边栏组织分组导航。
 
 ## 基础用法
 
-<DemoExample>
+每项使用唯一的 `index`；通过 `children` 添加子菜单，监听 `select` 处理导航。
+
+<DemoExample wide>
 
 <ClientOnly>
   <SidebarDemo />
@@ -16,64 +18,13 @@ import SidebarDemo from '../examples/SidebarDemo.vue'
 
 <template #source>
 
-```vue
-<script setup lang="ts">
-import { ZIconButton } from '@codex-proxy/ui/icon-button'
-import { ZSidebar } from '@codex-proxy/ui/sidebar'
-import { Box, LayoutDashboard, PanelLeftClose, PanelLeftOpen, Puzzle } from '@lucide/vue'
-import { ref } from 'vue'
-
-const collapse = ref(false)
-const activeIndex = ref('overview')
-const items = [
-  { index: 'overview', label: '概览', icon: LayoutDashboard },
-  {
-    index: 'plugins',
-    label: '插件',
-    icon: Puzzle,
-    children: [{ index: 'installed', label: '已安装', icon: Box }],
-  },
-]
-</script>
-
-<template>
-  <ZSidebar
-    :items="items"
-    :collapse="collapse"
-    :default-active="activeIndex"
-    :default-openeds="['plugins']"
-    navigation-label="主导航"
-    @select="index => activeIndex = index"
-  >
-    <template #brand-icon>
-      <Box class="size-11" />
-    </template>
-    <template #brand>
-      工作台
-    </template>
-    <template #footer>
-      <ZIconButton :aria-label="collapse ? '展开侧边栏' : '收起侧边栏'" @click="collapse = !collapse">
-        <PanelLeftOpen v-if="collapse" />
-        <PanelLeftClose v-else />
-      </ZIconButton>
-    </template>
-  </ZSidebar>
-</template>
-```
+<<< @/examples/SidebarDemo.vue
 
 </template>
 
 </DemoExample>
 
-## 用法说明
-
-菜单项使用全局唯一的 `index`，可配置 `label`、`icon`、`disabled`；顶层项通过 `children` 提供一级子菜单。展开状态下点击分组只切换子菜单，收起状态下点击分组触发该分组的 `select`，由应用决定进入哪个页面
-
-组件维护选中项和展开状态，`default-active` 与 `default-openeds` 的后续变化会同步到内部状态。选中子项时展开其所属分组，外部属性同步不触发用户事件。组件不依赖路由、请求、权限或持久化，应用在 `select` 中执行导航或其他业务操作
-
-组件填满父容器高度，宽度与折叠动效由组件管理。移动端断点、遮罩与模态焦点由宿主布局拥有。收起时隐藏品牌文字和菜单标签的可访问内容，菜单名称通过按钮标签与悬停提示提供；减少动态效果偏好下立即切换
-
-表面、圆角、边缘过渡与选中状态消费主题 Token，默认预设和柔光预设使用同一组件
+收起时点击分组会触发该分组的 `select`；展开时点击分组可显示子菜单。
 
 ## Sidebar API {#api}
 

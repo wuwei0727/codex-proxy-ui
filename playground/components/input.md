@@ -1,12 +1,18 @@
 <script setup lang="ts">
 import InputDemo from '../examples/InputDemo.vue'
+import InputFamilyDemo from '../examples/InputFamilyDemo.vue'
+import InputDisabledDemo from '../examples/InputDisabledDemo.vue'
+import InputClearDemo from '../examples/InputClearDemo.vue'
+import InputPasswordDemo from '../examples/InputPasswordDemo.vue'
 </script>
 
 # Input 输入框
 
-输入单行文本，支持前后插槽与表单校验
+输入单行文本。
 
 ## 基础用法
+
+使用 `v-model` 绑定输入内容。
 
 <DemoExample>
 
@@ -16,32 +22,73 @@ import InputDemo from '../examples/InputDemo.vue'
 
 <template #source>
 
-```vue
-<script setup lang="ts">
-import { ZFormItem, ZInput } from '@codex-proxy/ui'
-import { ref } from 'vue'
-
-const name = ref('')
-</script>
-
-<template>
-  <ZFormItem label="配置名称" required>
-    <ZInput v-model="name" placeholder="填写名称" />
-  </ZFormItem>
-</template>
-```
+<<< @/examples/InputDemo.vue
 
 </template>
 
 </DemoExample>
 
-## 用法说明
+## 输入控件对照 {#field-family}
 
-默认宽度为容器的 `100%`，可通过 `class / style` 指定宽度；示例容器宽 `240px`
+切换尺寸，对比文本、标签、选择器和日期输入框。
 
-通过 `v-model` 绑定字符串，使用 `ZFormItem` 关联标签与错误信息
+<ClientOnly>
+  <InputFamilyDemo />
+</ClientOnly>
 
-`clearable` 在有内容且可编辑时提供清空图标，悬停或聚焦时显示；清空后保持输入焦点。清空与密码显隐使用紧凑图标操作
+## 禁用状态 {#disabled}
+
+设置 `disabled` 后，输入框无法聚焦或编辑。
+
+<DemoExample>
+
+<ClientOnly>
+  <InputDisabledDemo />
+</ClientOnly>
+
+<template #source>
+
+<<< @/examples/InputDisabledDemo.vue
+
+</template>
+
+</DemoExample>
+
+## 可清空
+
+设置 `clearable`，悬停或聚焦时显示清空按钮。
+
+<DemoExample>
+
+<ClientOnly>
+  <InputClearDemo />
+</ClientOnly>
+
+<template #source>
+
+<<< @/examples/InputClearDemo.vue
+
+</template>
+
+</DemoExample>
+
+## 密码框
+
+使用 `show-password` 切换密码的显示与隐藏。
+
+<DemoExample>
+
+<ClientOnly>
+  <InputPasswordDemo />
+</ClientOnly>
+
+<template #source>
+
+<<< @/examples/InputPasswordDemo.vue
+
+</template>
+
+</DemoExample>
 
 ## Input API {#api}
 

@@ -60,14 +60,13 @@ function clear() {
 }
 defineExpose({ focus, blur: () => inputRef.value?.blur(), select: () => inputRef.value?.select(), clear })
 
-const containerClasses = computed(() => getInputClasses(props.size, props.disabled, invalid.value))
+const showClear = computed(() => Boolean(props.clearable && model.value && !props.disabled && (attrs.readonly === undefined || attrs.readonly === false)))
+const containerClasses = computed(() => getInputClasses(props.size, props.disabled, invalid.value, { trailing: Boolean(showClear.value || props.showPassword) }))
 
 const iconClasses = computed(() => [
   'inline-flex shrink-0',
   props.disabled ? 'text-z-text-disabled' : invalid.value ? 'text-z-error' : 'text-z-text-quaternary',
 ])
-
-const actionClasses = 'inline-flex size-4 shrink-0 items-center justify-center border-0 bg-transparent p-0 text-z-text-quaternary outline-none transition-colors hover:text-z-text-secondary focus-visible:ring-2 focus-visible:ring-z-control-outline disabled:cursor-not-allowed disabled:text-z-text-disabled'
 
 function updateModel(event: Event) {
   if (composing.value)
@@ -100,7 +99,7 @@ function syncAutofill(event: AnimationEvent) {
 
 <template>
   <div v-bind="rootAttrs" class="z-input min-w-0">
-    <span :class="containerClasses">
+    <span class="group/input relative inline-flex w-full items-center gap-2" :class="containerClasses">
       <span v-if="$slots.prefix" :class="iconClasses">
         <slot name="prefix" />
       </span>
@@ -126,8 +125,11 @@ function syncAutofill(event: AnimationEvent) {
         @focus="emit('focus', $event)"
         @blur="emit('blur', $event); validate('blur')"
       >
+      <span v-if="$slots.suffix" :class="iconClasses">
+        <slot name="suffix" />
+      </span>
       <button
-        v-if="clearable && model && !disabled && (controlAttrs.readonly === undefined || controlAttrs.readonly === false)"
+        v-if="showClear"
         type="button"
         :aria-label="locale.input.clear"
         :class="clearButtonClass"
@@ -140,7 +142,7 @@ function syncAutofill(event: AnimationEvent) {
       <button
         v-if="showPassword"
         type="button"
-        :class="actionClasses"
+        :class="clearButtonClass"
         class="z-input__password-toggle"
         :aria-label="(passwordVisible ? locale.input.hide : locale.input.show)(typeof attrs['aria-label'] === 'string' ? attrs['aria-label'] : locale.input.content)"
         :aria-pressed="passwordVisible"
@@ -150,9 +152,6 @@ function syncAutofill(event: AnimationEvent) {
       >
         <EyeOff v-if="passwordVisible" :size="14" /><Eye v-else :size="14" />
       </button>
-      <span v-if="$slots.suffix" :class="iconClasses">
-        <slot name="suffix" />
-      </span>
     </span>
   </div>
 </template>
@@ -165,7 +164,6 @@ function syncAutofill(event: AnimationEvent) {
   animation-name: z-input-autofill-sync;
   animation-duration: 1ms;
   background-clip: text !important;
-  caret-color: var(--z-color-text);
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: var(--z-color-text) !important;
   -webkit-box-shadow: none !important;

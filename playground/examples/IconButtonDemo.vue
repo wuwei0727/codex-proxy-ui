@@ -1,31 +1,15 @@
 <script setup lang="ts">
-import { ZCheckbox, ZIconButton, ZSegmented } from '@codex-proxy/ui'
-import { RefreshCw } from '@lucide/vue'
+import { ZIconButton } from '@codex-proxy/ui'
 import { ref } from 'vue'
-import DemoPlayground from '../.vitepress/theme/DemoPlayground.vue'
 
 const count = ref(0)
-const size = ref<'small' | 'default' | 'large'>('default')
-const loading = ref(false)
-const disabled = ref(false)
-const sizes = [{ label: '小', value: 'small' }, { label: '中', value: 'default' }, { label: '大', value: 'large' }]
 </script>
 
 <template>
-  <DemoPlayground>
-    <div class="demo-row">
-      <ZIconButton aria-label="刷新配置" :size="size" :loading="loading" :disabled="disabled" @click="count++">
-        <RefreshCw />
-      </ZIconButton>
-      <output aria-label="刷新次数" class="demo-value">已刷新 {{ count }} 次</output>
-    </div>
-    <template #controls>
-      <div class="demo-control">
-        <span>尺寸</span>
-        <ZSegmented v-model="size" :options="sizes" aria-label="组件尺寸" size="small" />
-      </div>
-      <ZCheckbox v-model="loading" label="加载中" />
-      <ZCheckbox v-model="disabled" label="禁用" />
-    </template>
-  </DemoPlayground>
+  <ZIconButton aria-label="刷新配置" @click="count++">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+      <path d="M20 7v5h-5M4 17v-5h5M6.1 6.1A8 8 0 0 1 20 12M4 12a8 8 0 0 0 13.9 5.9" />
+    </svg>
+  </ZIconButton>
+  <output aria-label="刷新次数">{{ count }}</output>
 </template>

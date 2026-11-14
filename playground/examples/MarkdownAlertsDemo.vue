@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ZMarkdown } from '@codex-proxy/ui/markdown'
-import DemoPlayground from '../.vitepress/theme/DemoPlayground.vue'
 
 const source = [
   '> [!NOTE]',
@@ -21,7 +20,5 @@ const source = [
 </script>
 
 <template>
-  <DemoPlayground wide>
-    <ZMarkdown :source="source" />
-  </DemoPlayground>
+  <ZMarkdown :source="source" />
 </template>
