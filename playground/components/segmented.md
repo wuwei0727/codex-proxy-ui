@@ -28,14 +28,15 @@ import SegmentedDemo from '../examples/SegmentedDemo.vue'
 
 ### 属性
 
-| 属性         | 说明                                       | 类型                              | 默认值      |
-| ------------ | ------------------------------------------ | --------------------------------- | ----------- |
-| `v-model`    | 当前选项值                                 | `string`                          | 必填        |
-| `aria-label` | 选项组名称，未设置时沿用 FormItem 标签     | `string`                          | —           |
-| `options`    | 选项包含 label、value，可选 icon、disabled | `SegmentedOption[]`               | 必填        |
-| `display`    | 显示文本或图标                             | `'label' \| 'icon'`               | `'label'`   |
-| `size`       | 尺寸                                       | `'small' \| 'default' \| 'large'` | `'default'` |
-| `disabled`   | 禁用整组                                   | `boolean`                         | `false`     |
+| 属性             | 说明                                       | 类型                              | 默认值      |
+| ---------------- | ------------------------------------------ | --------------------------------- | ----------- |
+| `validate-event` | 随控件事件触发表单校验                     | `boolean`                         | `true`      |
+| `v-model`        | 当前选项值                                 | `string`                          | 必填        |
+| `aria-label`     | 选项组名称，未设置时沿用 FormItem 标签     | `string`                          | —           |
+| `options`        | 选项包含 label、value，可选 icon、disabled | `SegmentedOption[]`               | 必填        |
+| `display`        | 显示文本或图标                             | `'label' \| 'icon'`               | `'label'`   |
+| `size`           | 尺寸                                       | `'small' \| 'default' \| 'large'` | `'default'` |
+| `disabled`       | 禁用整组                                   | `boolean`                         | `false`     |
 
 ### 事件
 

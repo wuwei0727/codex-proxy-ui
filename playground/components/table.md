@@ -84,6 +84,8 @@ function changePageSize(value: number) {
 
 | 属性                                                | 说明                            | 类型                                           | 默认值       |
 | --------------------------------------------------- | ------------------------------- | ---------------------------------------------- | ------------ |
+| `stripe`                                            | 显示交替行底色                  | `boolean`                                      | `true`       |
+| `row-class-name`                                    | 数据行样式类                    | `string \| (({ row, rowIndex }) => string)`    | —            |
 | `columns`                                           | 列定义                          | `TableColumn<Row>[]`                           | 必填         |
 | `data`                                              | 当前页数据                      | `Row[]`                                        | 必填         |
 | `row-key`                                           | 稳定行标识                      | `string \| ((row, index) => string \| number)` | `'id'`       |

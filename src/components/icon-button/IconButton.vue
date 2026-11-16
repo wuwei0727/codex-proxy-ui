@@ -3,13 +3,13 @@ import type { ComponentSize } from '../../shared/types'
 import type { ButtonProps } from '../button/types'
 import { LoaderCircle, setLucideProps, useLucideProps } from '@lucide/vue'
 import { computed, useTemplateRef } from 'vue'
+import { useComponentSize } from '../../shared/size'
 import { buttonSurface } from '../button/utils/surface'
 
 const props = withDefaults(
   defineProps<ButtonProps & { ariaLabel?: string, pressed?: boolean }>(),
   {
     variant: 'text',
-    size: 'default',
     loading: false,
     disabled: false,
     pressed: false,
@@ -17,13 +17,14 @@ const props = withDefaults(
     nativeType: 'button',
   },
 )
-
 const emit = defineEmits<{ click: [event: MouseEvent] }>()
 
 defineSlots<{
   loading?: () => unknown
   default: () => unknown
 }>()
+
+const componentSize = useComponentSize(() => props.size)
 
 const sizeClasses: Record<ComponentSize, string> = {
   small: 'size-z-control-sm',
@@ -41,7 +42,7 @@ const iconSizes: Record<ComponentSize, number> = {
 setLucideProps({
   ...useLucideProps(),
   get size() {
-    return iconSizes[props.size]
+    return iconSizes[componentSize.value]
   },
 })
 
@@ -54,7 +55,7 @@ const classes = computed(() => [
   'inline-grid shrink-0 touch-manipulation place-items-center rounded-z border-0 leading-none outline-none transition-[background-color,box-shadow,color,opacity,transform] duration-150 motion-safe:active:scale-[0.96] motion-reduce:transition-none',
   'focus-visible:ring-2 focus-visible:ring-z-control-outline focus-visible:ring-offset-2 focus-visible:ring-offset-z-bg-container',
   'disabled:cursor-not-allowed disabled:transform-none disabled:bg-z-bg-container-disabled disabled:text-z-text-disabled disabled:shadow-none',
-  sizeClasses[props.size],
+  sizeClasses[componentSize.value],
   buttonSurface(props.type, props.variant, true),
   props.pressed ? 'bg-z-bg-text-active text-z-text' : undefined,
 ])

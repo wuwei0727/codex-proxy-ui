@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
+import type { ComponentSize } from '../../shared/types'
 import type { FormItemContext, FormItemProp, FormItemValidateState, FormLabelPosition, FormRule } from './types'
 import { useResizeObserver } from '@vueuse/core'
 import { computed, inject, onBeforeUnmount, onMounted, provide, reactive, shallowReactive, shallowRef, useId, useTemplateRef, watch } from 'vue'
 import { useLocale } from '../../locale/context'
+import { provideComponentSize, useComponentSize } from '../../shared/size'
 import { useFormItemValidation } from './composables/useFormItemValidation'
 import { formFieldKey, formKey } from './context'
 
 const props = withDefaults(defineProps<{
+  size?: ComponentSize
   label?: string
   labelPosition?: FormLabelPosition | ''
   labelWidth?: string | number
@@ -21,6 +24,8 @@ const props = withDefaults(defineProps<{
   validateStatus?: FormItemValidateState
 }>(), { required: undefined, showMessage: undefined })
 const slots = defineSlots<{ 'default': () => unknown, 'label'?: () => unknown, 'label-extra'?: () => unknown, 'extra'?: () => unknown }>()
+provideComponentSize(() => props.size, 'form')
+const componentSize = useComponentSize(() => props.size)
 const locale = useLocale()
 const form = inject(formKey, null)
 const validation = useFormItemValidation(props, form)
@@ -117,7 +122,7 @@ provide(formFieldKey, {
     <div
       v-if="hasLabel || $slots.extra || isHorizontal"
       class="flex min-w-0 items-center gap-3"
-      :class="isHorizontal ? ['min-h-z-control', labelPosition === 'right' ? 'justify-end' : 'justify-start'] : 'mb-2 min-h-4 justify-between'"
+      :class="isHorizontal ? [{ small: 'min-h-z-control-sm', default: 'min-h-z-control', large: 'min-h-z-control-lg' }[componentSize], labelPosition === 'right' ? 'justify-end' : 'justify-start'] : 'mb-2 min-h-4 justify-between'"
     >
       <div ref="labelContent" class="inline-flex items-center gap-1.5" :class="isHorizontal && labelWidth === 'auto' ? 'w-max shrink-0' : 'min-w-0'">
         <!-- 复合字段提供组标签，控件保留独立 ID；显式 for 只关联指定控件 -->
@@ -125,8 +130,8 @@ provide(formFieldKey, {
           :is="resolvedControlId ? 'label' : 'span'"
           :id="labelId"
           :for="resolvedControlId"
-          class="flex min-w-0 items-center gap-1.5 text-z font-medium text-z-text-secondary"
-          :class="isHorizontal ? 'leading-snug' : 'leading-none'"
+          class="flex min-w-0 items-center gap-1.5 font-medium text-z-text-secondary"
+          :class="[{ small: 'text-z-sm', default: 'text-z', large: 'text-z-lg' }[componentSize], isHorizontal ? 'leading-snug' : 'leading-none']"
         >
           <slot name="label">
             {{ label }}

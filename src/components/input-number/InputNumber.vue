@@ -3,6 +3,7 @@ import type { ComponentSize } from '../../shared/types'
 import { Minus, Plus } from '@lucide/vue'
 import { computed, shallowRef, useAttrs, useTemplateRef, watch } from 'vue'
 import { useLocale } from '../../locale/context'
+import { useComponentSize } from '../../shared/size'
 
 import { useFormField } from '../form/composables/useFormField'
 import IconButton from '../icon-button/IconButton.vue'
@@ -21,25 +22,27 @@ const props = withDefaults(
     controls?: boolean
     precision?: number
     size?: ComponentSize
+    validateEvent?: boolean
   }>(),
   {
+    validateEvent: true,
     min: undefined,
     max: undefined,
     step: 1,
     unit: undefined,
     disabled: false,
     controls: true,
-    size: 'default',
   },
 )
-
 const emit = defineEmits<{ input: [value: string], change: [value: number], focus: [event: FocusEvent], blur: [event: FocusEvent] }>()
+
+const componentSize = useComponentSize(() => props.size)
 
 const locale = useLocale()
 
 const model = defineModel<number>({ required: true })
 const attrs = useAttrs()
-const { controlId, invalid, describedBy, required, ariaRequired, rootAttrs, controlAttrs, validate } = useFormField(attrs)
+const { controlId, invalid, describedBy, required, ariaRequired, rootAttrs, controlAttrs, validate } = useFormField(attrs, () => props.validateEvent)
 const inputRef = useTemplateRef<HTMLInputElement>('input')
 const draft = shallowRef(String(model.value))
 const controlLabel = computed(() => typeof attrs['aria-label'] === 'string' ? attrs['aria-label'] : locale.value.common.value)
@@ -93,8 +96,8 @@ function stepBy(direction: -1 | 1) {
   <div
     v-bind="rootAttrs"
     class="z-input-number inline-flex items-center"
-    :data-size="size"
-    :class="getInputClasses(size, disabled, invalid, { inset: controls ? 'item' : 'text' })"
+    :data-size="componentSize"
+    :class="getInputClasses(componentSize, disabled, invalid, { inset: controls ? 'item' : 'text' })"
   >
     <IconButton
       v-if="controls"
@@ -104,7 +107,7 @@ function stepBy(direction: -1 | 1) {
       :disabled="!canDecrease"
       @click="stepBy(-1)"
     >
-      <Minus class="size-3" />
+      <Minus class="size-3" :class="invalid && canDecrease && 'text-z-error'" />
     </IconButton>
 
     <span class="inline-flex min-w-0 flex-1 items-baseline justify-center gap-1">
@@ -126,13 +129,13 @@ function stepBy(direction: -1 | 1) {
         :disabled="disabled"
         :readonly="readonly"
         class="h-(--field-row) min-w-0 appearance-[textfield] border-0 bg-transparent p-0 font-mono tabular-nums text-z-text outline-none disabled:text-z-text-disabled [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
-        :class="size === 'small' ? 'w-9 text-right font-bold' : 'w-full text-center'"
+        :class="componentSize === 'small' ? 'w-9 text-right font-bold' : 'w-full text-center'"
         @input="updateDraft"
         @change="commitDraft"
         @focus="emit('focus', $event)"
         @blur="commitDraft(); emit('blur', $event); validate('blur')"
       >
-      <span v-if="unit" class="shrink-0 text-[9px] font-emphasis text-z-text-quaternary">
+      <span v-if="unit" class="shrink-0 text-[9px] font-emphasis text-(color:--field-affix)">
         {{ unit }}
       </span>
     </span>
@@ -145,7 +148,7 @@ function stepBy(direction: -1 | 1) {
       :disabled="!canIncrease"
       @click="stepBy(1)"
     >
-      <Plus class="size-3" />
+      <Plus class="size-3" :class="invalid && canIncrease && 'text-z-error'" />
     </IconButton>
   </div>
 </template>

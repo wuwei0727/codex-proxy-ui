@@ -3,6 +3,7 @@ import type { ComponentSize } from '../../shared/types'
 import { X } from '@lucide/vue'
 import { computed, useId } from 'vue'
 import { useLocale } from '../../locale/context'
+import { useComponentSize } from '../../shared/size'
 
 const props = withDefaults(defineProps<{
   type?: TagType
@@ -13,17 +14,17 @@ const props = withDefaults(defineProps<{
   closeLabel?: string
 }>(), {
   type: 'default',
-  size: 'default',
   round: false,
   closable: false,
   disabled: false,
   closeLabel: undefined,
 })
-
 // 关闭只通知调用方，由调用方决定是否移除标签。
 defineEmits<{ close: [event: MouseEvent] }>()
 
 defineSlots<{ default: () => unknown }>()
+
+const componentSize = useComponentSize(() => props.size)
 
 const locale = useLocale()
 
@@ -46,7 +47,7 @@ const sizeClasses: Record<ComponentSize, string> = {
   large: 'min-h-7 gap-2 px-2.5 py-1 text-z-sm',
 }
 const classes = computed(() => [
-  sizeClasses[props.size],
+  sizeClasses[componentSize.value],
   props.round ? 'rounded-full' : 'rounded-z',
   props.disabled ? 'bg-z-bg-container-disabled text-z-text-disabled' : typeClasses[props.type],
 ])

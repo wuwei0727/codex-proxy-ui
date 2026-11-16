@@ -47,14 +47,16 @@ import SliderDisabledDemo from '../examples/SliderDisabledDemo.vue'
 
 ### 属性
 
-| 属性         | 说明                         | 类型      | 默认值    |
-| ------------ | ---------------------------- | --------- | --------- |
-| `v-model`    | 当前数值                     | `number`  | 必填      |
-| `aria-label` | 可访问名称，建议填写具体用途 | `string`  | `'数值'`  |
-| `min / max`  | 数值范围                     | `number`  | `0 / 100` |
-| `step`       | 步长                         | `number`  | `1`       |
-| `unit`       | 辅助技术读取的数值单位       | `string`  | —         |
-| `disabled`   | 禁止修改                     | `boolean` | `false`   |
+| 属性             | 说明                         | 类型            | 默认值      |
+| ---------------- | ---------------------------- | --------------- | ----------- |
+| `size`           | 组件尺寸，未指定时继承       | `ComponentSize` | `'default'` |
+| `validate-event` | 随控件事件触发表单校验       | `boolean`       | `true`      |
+| `v-model`        | 当前数值                     | `number`        | 必填        |
+| `aria-label`     | 可访问名称，建议填写具体用途 | `string`        | `'数值'`    |
+| `min / max`      | 数值范围                     | `number`        | `0 / 100`   |
+| `step`           | 步长                         | `number`        | `1`         |
+| `unit`           | 辅助技术读取的数值单位       | `string`        | —           |
+| `disabled`       | 禁止修改                     | `boolean`       | `false`     |
 
 ### 事件
 

@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import type { Component } from 'vue'
 import type { ComponentSize } from '../../shared/types'
-
 import { useResizeObserver } from '@vueuse/core'
+
 import { clamp } from 'es-toolkit'
 import { computed, nextTick, shallowRef, useAttrs, useTemplateRef, watch } from 'vue'
+import { useComponentSize } from '../../shared/size'
 import { useFormField } from '../form/composables/useFormField'
 
 export interface SegmentedOption {
@@ -21,19 +22,22 @@ const props = withDefaults(
     disabled?: boolean
     display?: 'label' | 'icon'
     size?: ComponentSize
+    validateEvent?: boolean
   }>(),
   {
+    validateEvent: true,
     disabled: false,
     display: 'label',
-    size: 'default',
   },
 )
-
 const emit = defineEmits<{ change: [value: string] }>()
+
+const componentSize = useComponentSize(() => props.size)
+
 const attrs = useAttrs()
 const rootRef = useTemplateRef<HTMLElement>('root')
 const optionRefs = useTemplateRef<HTMLButtonElement[]>('option')
-const { controlId, labelledBy, describedBy, invalid, ariaRequired, validate } = useFormField(attrs)
+const { controlId, labelledBy, describedBy, invalid, ariaRequired, validate } = useFormField(attrs, () => props.validateEvent)
 defineExpose({ focus: () => rootRef.value?.querySelector<HTMLButtonElement>('[tabindex="0"]')?.focus() })
 const model = defineModel<string>({ required: true })
 
@@ -113,8 +117,8 @@ async function handleKeydown(event: KeyboardEvent, index: number) {
     :id="controlId"
     ref="root"
     tabindex="-1"
-    class="relative inline-grid min-w-0 max-w-full items-stretch overflow-x-auto rounded-z bg-(--z-input-bg) p-0.75 scrollbar-none [&::-webkit-scrollbar]:hidden [&::-webkit-scrollbar]:size-0"
-    :class="rootClasses[size]"
+    class="relative inline-grid min-w-0 max-w-full items-stretch overflow-x-auto rounded-z p-0.75 scrollbar-none [&::-webkit-scrollbar]:hidden [&::-webkit-scrollbar]:size-0"
+    :class="[rootClasses[componentSize], invalid && !disabled ? 'bg-z-error-container' : 'bg-(--z-input-bg)']"
     :style="gridStyle"
     role="radiogroup"
     :aria-label="ariaLabel"
@@ -135,7 +139,7 @@ async function handleKeydown(event: KeyboardEvent, index: number) {
       ref="option"
       class="relative z-10 inline-flex touch-manipulation items-center justify-center gap-1.5 rounded-z border-0 bg-transparent leading-none font-emphasis outline-none transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-z-control-outline motion-reduce:transition-none"
       :class="[
-        optionClasses[size],
+        optionClasses[componentSize],
         model === option.value ? 'text-z-text' : 'text-z-text-secondary hover:text-z-text',
         disabled || option.disabled ? 'cursor-not-allowed opacity-60 hover:text-z-text-secondary' : undefined,
         display === 'icon' ? 'px-0' : undefined,

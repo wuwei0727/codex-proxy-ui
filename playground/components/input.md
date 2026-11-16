@@ -96,6 +96,7 @@ import InputPasswordDemo from '../examples/InputPasswordDemo.vue'
 
 | 属性                                   | 说明                         | 类型                              | 默认值      |
 | -------------------------------------- | ---------------------------- | --------------------------------- | ----------- |
+| `validate-event`                       | 随控件事件触发表单校验       | `boolean`                         | `true`      |
 | `v-model`                              | 字符串值                     | `string`                          | `''`        |
 | `type`                                 | 原生输入类型                 | `string`                          | `'text'`    |
 | `placeholder`                          | 占位文字                     | `string`                          | `''`        |

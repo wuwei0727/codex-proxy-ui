@@ -295,6 +295,7 @@ export interface ThemeDimensionMap {
   controlHeight: string
   controlHeightLg: string
   tableRowHeight: string
+  tableRowHeightLg: string
   tableRowHeightSm: string
   borderRadiusSm: string
   borderRadius: string

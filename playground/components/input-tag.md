@@ -106,6 +106,7 @@ import InputTagLimitDemo from '../examples/InputTagLimitDemo.vue'
 
 | 属性                    | 说明                           | 类型                              | 默认值      |
 | ----------------------- | ------------------------------ | --------------------------------- | ----------- |
+| `validate-event`        | 随控件事件触发表单校验         | `boolean`                         | `true`      |
 | `v-model`               | 已确认的标签，按显示顺序排列   | `string[]`                        | `[]`        |
 | `placeholder`           | 没有标签时的输入提示           | `string`                          | —           |
 | `size`                  | 尺寸                           | `'small' \| 'default' \| 'large'` | `'default'` |

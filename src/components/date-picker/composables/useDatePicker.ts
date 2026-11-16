@@ -61,8 +61,7 @@ export function useDatePicker(props: Readonly<DatePickerProps>, model: Ref<DateP
     const value = pendingValue === noPendingValue ? model.value : pendingValue
     if (!sameValue(value, changeBaseline)) {
       emit('change', value)
-      if (props.validateEvent !== false)
-        validate()
+      validate()
       changeBaseline = value
     }
   }

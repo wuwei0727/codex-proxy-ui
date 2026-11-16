@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import type { ComponentSize } from '../../shared/types'
 import { Check, ChevronDown } from '@lucide/vue'
 import { clamp } from 'es-toolkit'
 import { computed, provide, shallowRef, useAttrs, useTemplateRef, watch } from 'vue'
 import { useLocale } from '../../locale/context'
+import { useComponentSize } from '../../shared/size'
 
 import { normalizeHexColor } from '../../shared/utils/color'
 import Button from '../button/Button.vue'
@@ -16,24 +18,28 @@ defineOptions({ inheritAttrs: false })
 
 const props = withDefaults(
   defineProps<{
+    size?: ComponentSize
+    validateEvent?: boolean
     presets?: readonly string[]
     disabled?: boolean
     allowAlpha?: boolean
   }>(),
   {
+    validateEvent: true,
     presets: () => [],
     disabled: false,
     allowAlpha: true,
   },
 )
-
 const emit = defineEmits<{ change: [value: string], focus: [event: FocusEvent], blur: [event: FocusEvent] }>()
+
+const componentSize = useComponentSize(() => props.size)
 
 const locale = useLocale()
 
 const attrs = useAttrs()
 const controlLabel = computed(() => typeof attrs['aria-label'] === 'string' ? attrs['aria-label'] : locale.value.colorPicker.label)
-const { controlId, invalid, describedBy, ariaRequired, rootAttrs, controlAttrs, validate } = useFormField(attrs)
+const { controlId, invalid, describedBy, ariaRequired, rootAttrs, controlAttrs, validate } = useFormField(attrs, () => props.validateEvent)
 provide(formFieldKey, null)
 const triggerRef = useTemplateRef<HTMLButtonElement>('trigger')
 defineExpose({ focus: () => triggerRef.value?.focus(), blur: () => triggerRef.value?.blur() })
@@ -290,7 +296,8 @@ function normalizedInputColor() {
         :id="controlId"
         ref="trigger"
         type="button"
-        class="group inline-flex size-8 items-center justify-center rounded-sm border-0 bg-transparent p-0 outline-none transition-opacity duration-150 hover:opacity-90 focus-visible:ring-2 focus-visible:ring-z-control-outline disabled:cursor-not-allowed disabled:opacity-60"
+        :class="[{ small: 'size-7', default: 'size-8', large: 'size-10' }[componentSize], invalid && !disabled && 'ring-2 ring-z-error ring-offset-1']"
+        class="group inline-flex items-center justify-center rounded-sm border-0 bg-transparent p-0 outline-none transition-opacity duration-150 hover:opacity-90 focus-visible:ring-2 focus-visible:ring-z-control-outline disabled:cursor-not-allowed disabled:opacity-60"
         :disabled="props.disabled"
         :aria-label="controlLabel"
         :aria-describedby="describedBy"

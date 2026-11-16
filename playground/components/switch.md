@@ -47,14 +47,16 @@ import SwitchTextDemo from '../examples/SwitchTextDemo.vue'
 
 ### 属性
 
-| 属性                          | 说明                              | 类型               | 默认值  |
-| ----------------------------- | --------------------------------- | ------------------ | ------- |
-| `v-model`                     | 开关状态                          | `boolean`          | `false` |
-| `label`                       | 可见标签；隐藏标签使用 aria-label | `string`           | —       |
-| `active-text / inactive-text` | 开启与关闭文字                    | `string`           | `''`    |
-| `inline-prompt`               | 在开关内部显示状态文字            | `boolean`          | `false` |
-| `width`                       | 轨道宽度，数字按 px 处理          | `string \| number` | `''`    |
-| `disabled`                    | 禁止修改                          | `boolean`          | `false` |
+| 属性                          | 说明                              | 类型               | 默认值      |
+| ----------------------------- | --------------------------------- | ------------------ | ----------- |
+| `size`                        | 组件尺寸，未指定时继承            | `ComponentSize`    | `'default'` |
+| `validate-event`              | 随控件事件触发表单校验            | `boolean`          | `true`      |
+| `v-model`                     | 开关状态                          | `boolean`          | `false`     |
+| `label`                       | 可见标签；隐藏标签使用 aria-label | `string`           | —           |
+| `active-text / inactive-text` | 开启与关闭文字                    | `string`           | `''`        |
+| `inline-prompt`               | 在开关内部显示状态文字            | `boolean`          | `false`     |
+| `width`                       | 轨道宽度，数字按 px 处理          | `string \| number` | `''`        |
+| `disabled`                    | 禁止修改                          | `boolean`          | `false`     |
 
 ### 事件
 

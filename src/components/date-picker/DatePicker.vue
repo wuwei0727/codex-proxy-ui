@@ -4,6 +4,7 @@ import { CalendarDays, Clock, X } from '@lucide/vue'
 import { useEventListener } from '@vueuse/core'
 import { computed, nextTick, provide, shallowRef, useAttrs, useTemplateRef } from 'vue'
 import { localeKey } from '../../locale/context'
+import { useComponentSize } from '../../shared/size'
 import { clearButtonClass } from '../../shared/utils/clear-button'
 import Button from '../button/Button.vue'
 import { useFormField } from '../form/composables/useFormField'
@@ -17,7 +18,6 @@ import { useDatePicker } from './composables/useDatePicker'
 defineOptions({ inheritAttrs: false })
 const props = withDefaults(defineProps<DatePickerProps>(), {
   type: 'date',
-  size: 'default',
   editable: true,
   clearable: true,
   rangeSeparator: '-',
@@ -31,9 +31,10 @@ const props = withDefaults(defineProps<DatePickerProps>(), {
 })
 const emit = defineEmits<DatePickerEmits>()
 defineSlots<DatePickerSlots>()
+const componentSize = useComponentSize(() => props.size)
 const model = defineModel<DatePickerValue>()
 const attrs = useAttrs()
-const { controlId, invalid, describedBy, ariaRequired, required, rootAttrs, controlAttrs, validate } = useFormField(attrs)
+const { controlId, invalid, describedBy, ariaRequired, required, rootAttrs, controlAttrs, validate } = useFormField(attrs, () => props.validateEvent)
 provide(formFieldKey, null)
 const {
   locale,
@@ -67,7 +68,7 @@ const inputs = useTemplateRef<HTMLInputElement[]>('inputs')
 const calendars = useTemplateRef<InstanceType<typeof DatePickerCalendar>[]>('calendars')
 const panel = useTemplateRef<HTMLElement>('panel')
 const inputRoot = useTemplateRef<HTMLElement>('inputRoot')
-const inputClasses = computed(() => getInputClasses(props.size, props.disabled, invalid.value, { open: open.value, trailing: Boolean(props.clearable && hasValue.value && !blocked.value) }))
+const inputClasses = computed(() => getInputClasses(componentSize.value, props.disabled, invalid.value, { open: open.value, trailing: Boolean(props.clearable && hasValue.value && !blocked.value) }))
 const controlLabel = computed(() => typeof attrs['aria-label'] === 'string' ? attrs['aria-label'] : locale.value.datePicker.label)
 const panelDates = computed(() => range.value && !props.singlePanel ? anchors.value : anchors.value.slice(0, 1))
 const fields = computed(() => range.value ? [props.startPlaceholder ?? locale.value.datePicker.startPlaceholder, props.endPlaceholder ?? locale.value.datePicker.endPlaceholder] : [props.placeholder ?? locale.value.datePicker.placeholder])
@@ -102,8 +103,7 @@ function onBlur(event: FocusEvent) {
   if (panel.value?.contains(event.relatedTarget as Node | null) || inputRoot.value?.contains(event.relatedTarget as Node | null))
     return
   applyInput()
-  if (props.validateEvent)
-    validate('blur')
+  validate('blur')
 }
 
 async function keydown(event: KeyboardEvent) {
@@ -144,9 +144,9 @@ async function keydown(event: KeyboardEvent) {
   <Popover v-bind="rootAttrs" v-model="open" class="z-date-picker" transition="z-slide-fade" :data-type="type" :disabled="blocked" :placement="placement" :offset="10" :teleported="teleported" @open="restoringFocus = false" @close="restoringFocus = true" @closed="restoringFocus = false">
     <template #reference="{ id }">
       <div ref="inputRoot" class="relative inline-flex w-full items-center gap-2" :class="inputClasses">
-        <component :is="prefixIcon || (time ? Clock : CalendarDays)" class="size-4 shrink-0" :class="disabled ? 'text-z-text-disabled' : invalid ? 'text-z-error' : 'text-z-text-quaternary'" />
+        <component :is="prefixIcon || (time ? Clock : CalendarDays)" class="size-4 shrink-0 text-(color:--field-affix)" />
         <template v-for="(placeholder, index) in fields" :key="index">
-          <span v-if="index" class="shrink-0 text-z-xs text-z-text-tertiary"><slot name="range-separator">{{ rangeSeparator }}</slot></span>
+          <span v-if="index" class="shrink-0 text-z-xs text-[color:var(--field-affix-state,var(--z-color-text-tertiary))]"><slot name="range-separator">{{ rangeSeparator }}</slot></span>
           <input
             :id="index === 0 ? controlId : controlId ? `${controlId}-end` : undefined"
             ref="inputs"

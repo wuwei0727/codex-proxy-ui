@@ -1,3 +1,4 @@
+import type { ComponentSize } from '../../shared/types'
 import type Pagination from './Pagination.vue'
 
 export interface PaginationState {
@@ -8,6 +9,8 @@ export interface PaginationState {
 }
 
 export interface PaginationProps {
+  size?: ComponentSize
+  hideOnSinglePage?: boolean
   total: number
   pageSizes?: number[]
   disabled?: boolean

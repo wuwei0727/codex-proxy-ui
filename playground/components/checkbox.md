@@ -47,12 +47,14 @@ import CheckboxMixedDemo from '../examples/CheckboxMixedDemo.vue'
 
 ### 属性
 
-| 属性            | 说明                              | 类型      | 默认值  |
-| --------------- | --------------------------------- | --------- | ------- |
-| `v-model`       | 选中状态                          | `boolean` | `false` |
-| `label`         | 可见标签；隐藏标签使用 aria-label | `string`  | —       |
-| `indeterminate` | 半选外观，不改写绑定值            | `boolean` | `false` |
-| `disabled`      | 禁止修改                          | `boolean` | `false` |
+| 属性             | 说明                              | 类型            | 默认值      |
+| ---------------- | --------------------------------- | --------------- | ----------- |
+| `size`           | 组件尺寸，未指定时继承            | `ComponentSize` | `'default'` |
+| `validate-event` | 随控件事件触发表单校验            | `boolean`       | `true`      |
+| `v-model`        | 选中状态                          | `boolean`       | `false`     |
+| `label`          | 可见标签；隐藏标签使用 aria-label | `string`        | —           |
+| `indeterminate`  | 半选外观，不改写绑定值            | `boolean`       | `false`     |
+| `disabled`       | 禁止修改                          | `boolean`       | `false`     |
 
 ### 事件
 
