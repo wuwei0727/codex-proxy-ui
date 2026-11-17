@@ -12,7 +12,7 @@ const props = withDefaults(
     variant: 'text',
     loading: false,
     disabled: false,
-    pressed: false,
+    pressed: undefined,
     type: 'default',
     nativeType: 'button',
   },
@@ -68,7 +68,7 @@ const classes = computed(() => [
     :class="classes"
     :disabled="disabled || loading"
     :aria-label="ariaLabel"
-    :aria-pressed="pressed || undefined"
+    :aria-pressed="pressed"
     :aria-busy="loading || undefined"
     @click="emit('click', $event)"
   >

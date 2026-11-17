@@ -3,6 +3,7 @@ import ButtonDemo from '../examples/ButtonDemo.vue'
 import ButtonDisabledDemo from '../examples/ButtonDisabledDemo.vue'
 import ButtonLoadingDemo from '../examples/ButtonLoadingDemo.vue'
 import ButtonSizesDemo from '../examples/ButtonSizesDemo.vue'
+import IconButtonDemo from '../examples/IconButtonDemo.vue'
 </script>
 
 # Button 按钮
@@ -22,6 +23,24 @@ import ButtonSizesDemo from '../examples/ButtonSizesDemo.vue'
 <template #source>
 
 <<< @/examples/ButtonDemo.vue
+
+</template>
+
+</DemoExample>
+
+## 图标按钮 {#icon-button}
+
+图标配文字使用 `ZButton` 的 `icon` 插槽。只有图标时使用 [ZIconButton](#icon-button-api)，用 `aria-label` 命名操作
+
+<DemoExample>
+
+<ClientOnly>
+  <IconButtonDemo />
+</ClientOnly>
+
+<template #source>
+
+<<< @/examples/IconButtonDemo.vue
 
 </template>
 
@@ -104,3 +123,13 @@ import ButtonSizesDemo from '../examples/ButtonSizesDemo.vue'
 ### 实例
 
 `focus()`、`blur()`、`element`（原生按钮）
+
+## IconButton API {#icon-button-api}
+
+尺寸、语义类型、原生按钮行为、加载与禁用、点击事件及实例方法与 [Button](#api) 相同。图标放在默认插槽，加载图标可用 `loading` 插槽替换
+
+| 属性         | 说明                             | 默认值   |
+| ------------ | -------------------------------- | -------- |
+| `aria-label` | 按钮的可访问名称                 | —        |
+| `variant`    | 与 Button 相同的外观选项         | `'text'` |
+| `pressed`    | 切换按钮的布尔状态，普通按钮省略 | —        |
