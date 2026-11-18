@@ -4,6 +4,7 @@ import { X } from '@lucide/vue'
 import { moveArrayElement, useSortable } from '@vueuse/integrations/useSortable'
 import { computed, nextTick, shallowRef, useAttrs, useTemplateRef } from 'vue'
 import { useLocale } from '../../locale/context'
+import { useComponentSize } from '../../shared/size'
 import { clearButtonClass } from '../../shared/utils/clear-button'
 import { useFormField } from '../form/composables/useFormField'
 import { getInputClasses, inputTagClass } from '../input/styles'
@@ -15,6 +16,7 @@ defineOptions({ inheritAttrs: false })
 
 const props = withDefaults(defineProps<{
   size?: ComponentSize
+  validateEvent?: boolean
   placeholder?: string
   max?: number
   disabled?: boolean
@@ -26,8 +28,7 @@ const props = withDefaults(defineProps<{
   draggable?: boolean
   trigger?: 'Enter' | 'Space'
   saveOnBlur?: boolean
-}>(), { size: 'default', saveOnBlur: true, trigger: 'Enter' })
-
+}>(), { validateEvent: true, saveOnBlur: true, trigger: 'Enter' })
 const emit = defineEmits<{
   change: [tags: string[]]
   addTag: [tag: string]
@@ -37,16 +38,20 @@ const emit = defineEmits<{
   focus: [event: FocusEvent]
   blur: [event: FocusEvent]
 }>()
+
 defineSlots<{ prefix?: () => unknown, suffix?: () => unknown }>()
+
+const componentSize = useComponentSize(() => props.size)
+
 const model = defineModel<string[]>({ default: () => [] })
 const locale = useLocale()
-const { controlId, invalid, describedBy, required, ariaRequired, rootAttrs, controlAttrs, validate } = useFormField(useAttrs())
+const { controlId, invalid, describedBy, required, ariaRequired, rootAttrs, controlAttrs, validate } = useFormField(useAttrs(), () => props.validateEvent)
 const input = useTemplateRef<HTMLInputElement>('input')
 const draft = shallowRef('')
 const editable = computed(() => !props.disabled && !props.readonly)
 const full = computed(() => props.max !== undefined && model.value.length >= props.max)
 
-const tagSize = computed(() => props.size === 'small' ? 'small' : 'default')
+const tagSize = computed(() => componentSize.value === 'small' ? 'small' : 'default')
 const list = useTemplateRef<HTMLElement>('list')
 const samples = useTemplateRef<HTMLElement>('samples')
 const candidates = computed(() => props.collapseTags ? model.value.slice(0, Math.max(1, props.maxCollapseTags ?? model.value.length)) : [])
@@ -155,12 +160,12 @@ defineExpose({ focus, commit, clear })
   <div
     v-bind="rootAttrs"
     class="z-input-tag group/input relative inline-flex w-full items-center gap-2"
-    :class="getInputClasses(size, disabled, invalid, { inset: model.length && !$slots.prefix ? 'item' : 'text', trailing: Boolean(clearable && editable && (model.length || draft)) })"
+    :class="getInputClasses(componentSize, disabled, invalid, { inset: model.length && !$slots.prefix ? 'item' : 'text', trailing: Boolean(clearable && editable && (model.length || draft)) })"
     @mousedown="focusFromSurface"
     @focusin="handleFocus"
     @focusout="handleFocus"
   >
-    <span v-if="$slots.prefix" class="inline-flex shrink-0 text-z-text-quaternary"><slot name="prefix" /></span>
+    <span v-if="$slots.prefix" class="inline-flex shrink-0 text-(color:--field-affix)"><slot name="prefix" /></span>
     <div ref="list" class="flex min-w-0 flex-1 items-center gap-1" :class="collapseTags ? 'flex-nowrap' : 'flex-wrap'">
       <Tag
         v-for="(tag, index) in visible"
@@ -220,7 +225,7 @@ defineExpose({ focus, commit, clear })
         <span class="w-[5ch]" />
       </div>
     </div>
-    <span v-if="$slots.suffix" class="inline-flex shrink-0 text-z-text-quaternary"><slot name="suffix" /></span>
+    <span v-if="$slots.suffix" class="inline-flex shrink-0 text-(color:--field-affix)"><slot name="suffix" /></span>
     <button
       v-if="clearable && editable && (model.length || draft)"
       type="button"

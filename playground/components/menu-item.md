@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import DropdownDemo from '../examples/DropdownDemo.vue'
 import MenuItemDemo from '../examples/MenuItemDemo.vue'
 </script>
 
@@ -19,6 +20,26 @@ import MenuItemDemo from '../examples/MenuItemDemo.vue'
 <template #source>
 
 <<< @/examples/MenuItemDemo.vue
+
+</template>
+
+</DemoExample>
+
+## Dropdown 操作菜单 {#dropdown}
+
+在 `ZDropdown` 的 `reference` 插槽中，将 `trigger` 绑定到触发按钮。默认插槽放置 `ZMenuItem`，选中后自动关闭。用 `menu-class` 设置菜单的宽度和内边距，`placement` 沿用 [Popover](./popover.md#api) 的位置，默认右下对齐
+
+键盘打开时聚焦菜单项，上下方向键移动，Home / End 跳至首尾，Esc 关闭并返回按钮
+
+<DemoExample>
+
+<ClientOnly>
+  <DropdownDemo />
+</ClientOnly>
+
+<template #source>
+
+<<< @/examples/DropdownDemo.vue
 
 </template>
 

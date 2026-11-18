@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import FormSizeDemo from '../examples/FormSizeDemo.vue'
 import FormDemo from '../examples/FormDemo.vue'
 </script>
 
@@ -24,6 +25,26 @@ import FormDemo from '../examples/FormDemo.vue'
 
 </DemoExample>
 
+## 尺寸与提交校验 {#sizes}
+
+切换尺寸可以同时调整输入框、下拉框和按钮。表单项也可单独设置尺寸；控件显式指定 `size="default"` 时会保持默认大小
+
+以下示例使用 `:validate-event="false"` 关闭控件的事件校验，提交时调用 `validate()`。配合 `:show-message="false"`，无效字段只显示错误态
+
+<DemoExample wide>
+
+<ClientOnly>
+  <FormSizeDemo />
+</ClientOnly>
+
+<template #source>
+
+<<< @/examples/FormSizeDemo.vue
+
+</template>
+
+</DemoExample>
+
 ## 标签对齐
 
 设置 `label-position` 调整标签位置。水平布局使用 `label-width="auto"` 可按最长标签对齐。多个控件共用一个标签时，需分别提供可访问名称。
@@ -38,6 +59,7 @@ import FormDemo from '../examples/FormDemo.vue'
 
 | 属性                       | 说明                             | 类型                               | 默认值                 |
 | -------------------------- | -------------------------------- | ---------------------------------- | ---------------------- |
+| `size`                     | 组件尺寸，未指定时继承           | `ComponentSize`                    | 继承                   |
 | `model`                    | 校验与重置操作的业务模型         | `object`                           | —                      |
 | `rules`                    | 按字段路径配置的规则             | `FormRules<T>`                     | —                      |
 | `label-position`           | 标签位置                         | `'left' \| 'right' \| 'top'`       | `'top'`                |
@@ -89,6 +111,7 @@ import FormDemo from '../examples/FormDemo.vue'
 
 | 属性                          | 说明                                               | 类型                                         | 默认值     |
 | ----------------------------- | -------------------------------------------------- | -------------------------------------------- | ---------- |
+| `size`                        | 组件尺寸，未指定时继承                             | `ComponentSize`                              | 继承       |
 | `prop`                        | 模型字段路径，如 `user.name` 或 `['user', 'name']` | `string \| string[]`                         | —          |
 | `rules`                       | 与表单规则合并的字段规则                           | `FormRule \| FormRule[]`                     | —          |
 | `label-position`              | 标签位置                                           | `'' \| 'left' \| 'right' \| 'top'`           | 继承 Form  |

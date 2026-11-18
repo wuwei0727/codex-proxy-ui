@@ -49,6 +49,7 @@ import InputNumberStepDemo from '../examples/InputNumberStepDemo.vue'
 
 | 属性                  | 说明                               | 类型                              | 默认值      |
 | --------------------- | ---------------------------------- | --------------------------------- | ----------- |
+| `validate-event`      | 随控件事件触发表单校验             | `boolean`                         | `true`      |
 | `v-model`             | 有限数值，暂时清空输入不提交空值   | `number`                          | 必填        |
 | `min / max`           | 提交和步进的边界                   | `number`                          | —           |
 | `step`                | 步进值，支持小数与科学计数法       | `number`                          | `1`         |

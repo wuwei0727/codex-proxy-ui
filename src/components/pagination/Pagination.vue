@@ -4,8 +4,9 @@ import type { PagerItem } from './utils/pagination'
 import { ChevronLeft, ChevronRight } from '@lucide/vue'
 import { useRafFn, useResizeObserver } from '@vueuse/core'
 import { computed, shallowRef, useTemplateRef } from 'vue'
-
 import { useLocale } from '../../locale/context'
+
+import { useComponentSize } from '../../shared/size'
 import IconButton from '../icon-button/IconButton.vue'
 import Select from '../select/Select.vue'
 import {
@@ -16,8 +17,9 @@ import {
 } from './utils/pagination'
 
 const props = defineProps<PaginationProps>()
-
 const emit = defineEmits<{ currentChange: [page: number], sizeChange: [pageSize: number] }>()
+
+const componentSize = useComponentSize(() => props.size, 'small')
 
 const locale = useLocale()
 
@@ -100,9 +102,16 @@ function goToPage(target: number) {
   emit('currentChange', target)
 }
 
+const pageSizeClasses = {
+  small: 'h-z-control-sm min-w-z-control-sm text-xs',
+  default: 'h-z-control min-w-z-control text-z',
+  large: 'h-z-control-lg min-w-z-control-lg text-z-lg',
+}
+
 function paginationPageClass(page: number) {
   return [
-    'inline-flex h-8 min-w-8 shrink-0 items-center justify-center rounded-z border-0 px-2 text-xs font-bold leading-none whitespace-nowrap transition-colors duration-150 outline-none',
+    pageSizeClasses[componentSize.value],
+    'inline-flex shrink-0 items-center justify-center rounded-z border-0 px-2 font-bold leading-none whitespace-nowrap transition-colors duration-150 outline-none',
     page === currentPage.value
       ? 'cursor-default bg-(--z-button-primary-bg) text-(--z-button-primary-color)'
       : 'cursor-pointer bg-z-fill-quaternary text-z-text hover:bg-z-bg-text-hover focus-visible:ring-2 focus-visible:ring-z-control-outline focus-visible:ring-offset-2 focus-visible:ring-offset-z-bg-container',
@@ -112,6 +121,7 @@ function paginationPageClass(page: number) {
 
 <template>
   <footer
+    v-if="!hideOnSinglePage || totalPages > 1"
     class="@container/pagination mt-2 min-h-10 min-w-0 shrink-0 px-0 py-1"
   >
     <div
@@ -129,7 +139,7 @@ function paginationPageClass(page: number) {
           :aria-label="locale.pagination.sizeLabel"
           :options="pageSizeOptions"
           :disabled="disabled"
-          size="small"
+          :size="componentSize"
           class="w-full"
           @change="changePageSize"
         />
@@ -142,7 +152,7 @@ function paginationPageClass(page: number) {
       >
         <IconButton
           variant="solid"
-          size="small"
+          :size="componentSize"
           :disabled="disabled || currentPage <= 1"
           :aria-label="locale.pagination.previous"
           @click="goToPage(currentPage - 1)"
@@ -162,7 +172,8 @@ function paginationPageClass(page: number) {
             <template v-for="(item, index) in items" :key="`${item}-${index}`">
               <span
                 v-if="item === 'ellipsis'"
-                class="inline-flex size-8 items-center justify-center text-xs font-bold text-z-text-quaternary"
+                :class="pageSizeClasses[componentSize]"
+                class="inline-flex items-center justify-center font-bold text-z-text-quaternary"
               >
                 …
               </span>
@@ -182,7 +193,7 @@ function paginationPageClass(page: number) {
 
         <IconButton
           variant="solid"
-          size="small"
+          :size="componentSize"
           :disabled="disabled || currentPage >= totalPages"
           :aria-label="locale.pagination.next"
           @click="goToPage(currentPage + 1)"

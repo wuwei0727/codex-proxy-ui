@@ -69,6 +69,8 @@ export type TableSlots<Row extends TableRow = TableRow> = NonNullable<Parameters
 export interface TableProps<Row extends TableRow> {
   columns: TableColumn<Row>[]
   data: Row[]
+  stripe?: boolean
+  rowClassName?: string | ((context: { row: Row, rowIndex: number }) => string)
   rowKey?: string | ((row: Row, index: number) => string | number)
   selectedRowKeys?: Array<string | number>
   expandedRowKeys?: Array<string | number>

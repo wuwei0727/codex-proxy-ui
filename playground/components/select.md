@@ -87,6 +87,10 @@ import SelectCollapseDemo from '../examples/SelectCollapseDemo.vue'
 
 | 属性                                                   | 说明                                                                   | 类型                              | 默认值                  |
 | ------------------------------------------------------ | ---------------------------------------------------------------------- | --------------------------------- | ----------------------- |
+| `validate-event`                                       | 随控件事件触发表单校验                                                 | `boolean`                         | `true`                  |
+| `multiple-limit`                                       | 多选可选数量上限，0 表示不限                                           | `number`                          | `0`                     |
+| `no-match-text`                                        | 搜索无匹配时的文案                                                     | `string`                          | 语言包                  |
+| `loading-text`                                         | 加载时的文案                                                           | `string`                          | 语言包                  |
 | `v-model`                                              | Value 为 string 或 number；单选空值 undefined，多选空值 []，0 是有效值 | `Value \| undefined` 或 `Value[]` | 必填                    |
 | `options`                                              | label、value；可选 description、disabled                               | `SelectOption<Value>[]`           | 必填                    |
 | `size`                                                 | 组件尺寸                                                               | `'small' \| 'default' \| 'large'` | `'default'`             |

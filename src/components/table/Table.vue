@@ -1,10 +1,10 @@
 <script setup lang="ts" generic="Row extends object = Record<string, unknown>">
 import type { ResolvedTableColumn, TableEmits, TableProps } from './types'
 import { Triangle } from '@lucide/vue'
-
 import { useResizeObserver } from '@vueuse/core'
 import { computed, nextTick, onMounted, onUnmounted, shallowRef, useSlots, useTemplateRef, watch } from 'vue'
 import { useLocale } from '../../locale/context'
+import { useComponentSize } from '../../shared/size'
 import Empty from '../empty/Empty.vue'
 import Scrollbar from '../scrollbar/Scrollbar.vue'
 import { useTableColumnMotion } from './composables/useTableColumnMotion'
@@ -24,9 +24,9 @@ import {
 
 const props = withDefaults(defineProps<TableProps<Row>>(), {
   rowKey: 'id',
+  stripe: true,
   selectedRowKeys: () => [],
   expandedRowKeys: () => [],
-  size: 'default',
   loading: false,
   showHeaderWhenEmpty: false,
   scrollbarAlwaysVisible: false,
@@ -34,8 +34,9 @@ const props = withDefaults(defineProps<TableProps<Row>>(), {
   resizable: true,
   headerAlign: 'center',
 })
-
 const emit = defineEmits<TableEmits>()
+
+const componentSize = useComponentSize(() => props.size)
 
 const locale = useLocale()
 
@@ -270,24 +271,20 @@ watch([() => displayRows.value.length, () => props.columns], async () => {
   updateScrollLayout()
 })
 
-const headerRowClass = computed(() => [
-  props.size === 'small' ? 'h-8 text-z-xs' : props.size === 'large' ? 'h-12 text-z' : 'h-10 text-z-sm',
-  'font-bold text-z-text-secondary',
-])
-const bodyRowClass = computed(() => (props.size === 'small' ? 'h-z-table-row-sm' : props.size === 'large' ? 'h-12' : 'h-z-table-row'))
-const cellPaddingClass = computed(() => (props.size === 'small' ? 'px-1.5' : props.size === 'large' ? 'px-4' : 'px-2'))
-const bodyTextClass = computed(() => (props.size === 'small' ? 'text-z-sm' : props.size === 'large' ? 'text-z-lg' : 'text-z'))
+// 空态遮罩和滚动条沿用表头高度，单元格内容沿用行高，切换密度时保持对齐
+const tableSizeClasses = {
+  small: '[--table-header-height:2rem] [--table-row-height:var(--z-table-row-height-sm)] [--table-row-gap:4px]',
+  default: '[--table-header-height:2.5rem] [--table-row-height:var(--z-table-row-height)] [--table-row-gap:6px]',
+  large: '[--table-header-height:3rem] [--table-row-height:var(--z-table-row-height-lg)] [--table-row-gap:6px]',
+}
+const cellPaddingClass = computed(() => (componentSize.value === 'small' ? 'px-1.5' : componentSize.value === 'large' ? 'px-4' : 'px-2'))
+const bodyTextClass = computed(() => (componentSize.value === 'small' ? 'text-z-sm' : componentSize.value === 'large' ? 'text-z-lg' : 'text-z'))
 const bodyCellFrameClass = computed(() =>
-  props.size === 'small'
+  componentSize.value === 'small'
     ? 'border-y-2 border-transparent bg-clip-padding'
     : 'border-y-[3px] border-transparent bg-clip-padding',
 )
-const firstRowTopGapClass = computed(() => (props.size === 'small' ? 'border-t-4' : 'border-t-[6px]'))
-const bodyCellContentClass = computed(() =>
-  props.size === 'small'
-    ? 'min-h-[calc(var(--z-table-row-height-sm)-4px)]'
-    : 'min-h-[calc(var(--z-table-row-height)-6px)]',
-)
+const firstRowTopGapClass = computed(() => (componentSize.value === 'small' ? 'border-t-4' : 'border-t-[6px]'))
 
 function getRowKey(row: Row, index: number) {
   if (typeof props.rowKey === 'function')
@@ -307,14 +304,15 @@ function isRowExpanded(row: Row, index: number) {
 function rowBackgroundClass(row: Row, index: number) {
   if (isRowSelected(row, index))
     return 'bg-(--z-table-row-selected-bg)'
-  if (index % 2 === 1)
+  if (props.stripe && index % 2 === 1)
     return 'bg-(--z-table-row-stripe-bg)'
   return 'bg-(--z-table-row-bg)'
 }
 
 function rowClass(row: Row, index: number) {
   return [
-    bodyRowClass.value,
+    'h-(--table-row-height)',
+    typeof props.rowClassName === 'function' ? props.rowClassName({ row, rowIndex: index }) : props.rowClassName,
     isRowSelected(row, index)
       ? 'hover:[&>td]:bg-(--z-table-row-selected-hover-bg)'
       : 'hover:[&>td]:bg-(--z-table-row-hover-bg)',
@@ -392,17 +390,12 @@ function sortButtonLabel(column: ResolvedTableColumn<Row>) {
 </script>
 
 <template>
-  <div class="@container/table isolate flex h-full min-h-0 w-full max-w-full flex-col overflow-hidden" :aria-busy="loading || undefined">
+  <div class="@container/table isolate flex h-full min-h-0 w-full max-w-full flex-col overflow-hidden" :class="tableSizeClasses[componentSize]" :aria-busy="loading || undefined">
     <div class="relative flex min-h-0 max-w-full flex-1 overflow-hidden" :class="loading && !hasRows ? 'min-h-36' : undefined">
       <Scrollbar
         v-if="hasRows || showHeaderWhenEmpty"
         ref="scrollbar"
-        class="min-h-0 flex-1"
-        :class="
-          size === 'small'
-            ? '[--z-scrollbar-track-inset-block-start:2.25rem]'
-            : '[--z-scrollbar-track-inset-block-start:2.75rem]'
-        "
+        class="min-h-0 flex-1 [--z-scrollbar-track-inset-block-start:calc(var(--table-header-height)+0.25rem)]"
         :always-visible="scrollbarAlwaysVisible"
         :inert="loading || undefined"
         horizontal
@@ -413,7 +406,7 @@ function sortButtonLabel(column: ResolvedTableColumn<Row>) {
             <col v-for="column in computedColumns" :key="column.key" :style="columnStyle(column, computedColumns)">
           </colgroup>
           <thead>
-            <tr :class="headerRowClass">
+            <tr class="h-(--table-header-height) font-bold text-z-text-secondary" :class="{ small: 'text-z-xs', default: 'text-z-sm', large: 'text-z' }[componentSize]">
               <th
                 v-for="(column, columnIndex) in computedColumns"
                 :key="column.key"
@@ -514,7 +507,7 @@ function sortButtonLabel(column: ResolvedTableColumn<Row>) {
                   ]"
                   :style="stickyStyle(column)"
                 >
-                  <div class="grid content-center" :class="bodyCellContentClass" :data-column-motion="column.sticky ? undefined : column.key">
+                  <div class="grid min-h-[calc(var(--table-row-height)-var(--table-row-gap))] content-center" :data-column-motion="column.sticky ? undefined : column.key">
                     <div :class="cellContentClass(column)" :title="bodyCellTitle(column, row)">
                       <slot
                         :name="column.key"
@@ -547,7 +540,7 @@ function sortButtonLabel(column: ResolvedTableColumn<Row>) {
       <div
         v-if="!hasRows"
         class="grid min-h-0 flex-1 place-items-center overflow-hidden px-4"
-        :class="showHeaderWhenEmpty ? ['absolute inset-x-0 bottom-0', size === 'small' ? 'top-8' : 'top-10'] : undefined"
+        :class="showHeaderWhenEmpty ? 'absolute inset-x-0 top-(--table-header-height) bottom-0' : undefined"
       >
         <slot v-if="!loading" name="empty">
           <Empty :title="emptyText ?? locale.common.empty" surface="none" class="w-full max-w-80" />
@@ -557,7 +550,7 @@ function sortButtonLabel(column: ResolvedTableColumn<Row>) {
       <div
         v-if="loading"
         class="absolute inset-x-0 bottom-0 z-50 grid place-items-center rounded-[inherit] bg-z-bg-container/82 backdrop-blur-xs"
-        :class="!hasRows && showHeaderWhenEmpty ? (size === 'small' ? 'top-8' : 'top-10') : 'top-0'"
+        :class="!hasRows && showHeaderWhenEmpty ? 'top-(--table-header-height)' : 'top-0'"
         role="status"
         aria-live="polite"
       >

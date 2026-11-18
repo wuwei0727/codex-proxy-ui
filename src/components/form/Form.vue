@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import type { ValidateFieldsError } from '@rc-component/async-validator'
 import type { Ref } from 'vue'
+import type { ComponentSize } from '../../shared/types'
 import type { FormItemContext, FormItemProp, FormLabelPosition, FormRules, FormValidateCallback } from './types'
 import { cloneDeep } from 'es-toolkit'
 import { get, set } from 'es-toolkit/compat'
 import { computed, nextTick, provide, shallowReactive, watch } from 'vue'
+import { provideComponentSize } from '../../shared/size'
 import { formKey } from './context'
 
 const props = withDefaults(defineProps<{
+  size?: ComponentSize
   model?: object
   rules?: FormRules
   labelPosition?: FormLabelPosition
@@ -26,7 +29,7 @@ const props = withDefaults(defineProps<{
 })
 const emit = defineEmits<{ validate: [prop: FormItemProp, isValid: boolean, message: string] }>()
 defineSlots<{ default: () => unknown }>()
-
+provideComponentSize(() => props.size, 'form')
 const fields = shallowReactive<FormItemContext[]>([])
 const initialValues = new Map<string, unknown>()
 const labelWidths = shallowReactive(new Set<Readonly<Ref<number>>>())

@@ -220,6 +220,7 @@
   --spacing-z-control-lg: var(--z-control-height-lg);
   --spacing-z-size-step: var(--z-size-step);
   --spacing-z-table-row: var(--z-table-row-height);
+  --spacing-z-table-row-lg: var(--z-table-row-height-lg);
   --spacing-z-table-row-sm: var(--z-table-row-height-sm);
 }
 

@@ -3,6 +3,7 @@ import type { ComponentSize } from '../../shared/types'
 import { Eye, EyeOff, X } from '@lucide/vue'
 import { computed, nextTick, shallowRef, useAttrs, useTemplateRef, watch } from 'vue'
 import { useLocale } from '../../locale/context'
+import { useComponentSize } from '../../shared/size'
 import { clearButtonClass } from '../../shared/utils/clear-button'
 import { useFormField } from '../form/composables/useFormField'
 import { getInputClasses, inputFieldClass } from './styles'
@@ -17,15 +18,15 @@ const props = withDefaults(
     clearable?: boolean
     showPassword?: boolean
     size?: ComponentSize
+    validateEvent?: boolean
   }>(),
   {
+    validateEvent: true,
     placeholder: '',
     type: 'text',
     disabled: false,
-    size: 'default',
   },
 )
-
 const emit = defineEmits<{
   input: [value: string]
   change: [value: string]
@@ -36,11 +37,13 @@ const emit = defineEmits<{
 
 defineSlots<{ prefix?: () => unknown, suffix?: () => unknown }>()
 
+const componentSize = useComponentSize(() => props.size)
+
 const locale = useLocale()
 
 const model = defineModel<string>({ default: '' })
 const attrs = useAttrs()
-const { controlId, invalid, describedBy, required, ariaRequired, rootAttrs, controlAttrs, validate } = useFormField(attrs)
+const { controlId, invalid, describedBy, required, ariaRequired, rootAttrs, controlAttrs, validate } = useFormField(attrs, () => props.validateEvent)
 watch(model, () => {
   void validate('change')
 })
@@ -61,12 +64,7 @@ function clear() {
 defineExpose({ focus, blur: () => inputRef.value?.blur(), select: () => inputRef.value?.select(), clear })
 
 const showClear = computed(() => Boolean(props.clearable && model.value && !props.disabled && (attrs.readonly === undefined || attrs.readonly === false)))
-const containerClasses = computed(() => getInputClasses(props.size, props.disabled, invalid.value, { trailing: Boolean(showClear.value || props.showPassword) }))
-
-const iconClasses = computed(() => [
-  'inline-flex shrink-0',
-  props.disabled ? 'text-z-text-disabled' : invalid.value ? 'text-z-error' : 'text-z-text-quaternary',
-])
+const containerClasses = computed(() => getInputClasses(componentSize.value, props.disabled, invalid.value, { trailing: Boolean(showClear.value || props.showPassword) }))
 
 function updateModel(event: Event) {
   if (composing.value)
@@ -100,7 +98,7 @@ function syncAutofill(event: AnimationEvent) {
 <template>
   <div v-bind="rootAttrs" class="z-input min-w-0">
     <span class="group/input relative inline-flex w-full items-center gap-2" :class="containerClasses">
-      <span v-if="$slots.prefix" :class="iconClasses">
+      <span v-if="$slots.prefix" class="inline-flex shrink-0 text-(color:--field-affix)">
         <slot name="prefix" />
       </span>
       <input
@@ -125,7 +123,7 @@ function syncAutofill(event: AnimationEvent) {
         @focus="emit('focus', $event)"
         @blur="emit('blur', $event); validate('blur')"
       >
-      <span v-if="$slots.suffix" :class="iconClasses">
+      <span v-if="$slots.suffix" class="inline-flex shrink-0 text-(color:--field-affix)">
         <slot name="suffix" />
       </span>
       <button

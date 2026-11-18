@@ -1,11 +1,15 @@
 <script setup lang="ts">
+import type { ComponentSize } from '../../shared/types'
 import { computed, useAttrs, useTemplateRef } from 'vue'
+import { choiceLabelClasses, useComponentSize } from '../../shared/size'
 import { useFormField } from '../form/composables/useFormField'
 
 defineOptions({ inheritAttrs: false })
 
 const props = withDefaults(
   defineProps<{
+    size?: ComponentSize
+    validateEvent?: boolean
     label?: string
     disabled?: boolean
     activeText?: string
@@ -14,6 +18,7 @@ const props = withDefaults(
     width?: string | number
   }>(),
   {
+    validateEvent: true,
     disabled: false,
     activeText: '',
     inactiveText: '',
@@ -21,13 +26,15 @@ const props = withDefaults(
     width: '',
   },
 )
-
 const emit = defineEmits<{ change: [value: boolean], focus: [event: FocusEvent], blur: [event: FocusEvent] }>()
+
+const componentSize = useComponentSize(() => props.size)
+
 const model = defineModel<boolean>({ default: false })
 const attrs = useAttrs()
 const inputRef = useTemplateRef<HTMLInputElement>('input')
 defineExpose({ focus: () => inputRef.value?.focus(), blur: () => inputRef.value?.blur() })
-const { controlId, invalid, describedBy, required, ariaRequired, rootAttrs, controlAttrs, validate } = useFormField(attrs)
+const { controlId, invalid, describedBy, required, ariaRequired, rootAttrs, controlAttrs, validate } = useFormField(attrs, () => props.validateEvent)
 const hasStateText = computed(() => Boolean(props.activeText || props.inactiveText))
 const inlineText = computed(() => model.value ? props.activeText : props.inactiveText)
 const trackStyle = computed(() => props.width === ''
@@ -39,28 +46,31 @@ const trackStyle = computed(() => props.width === ''
     })
 
 const trackClasses = computed(() => [
-  'relative inline-flex h-6 min-w-11 shrink-0 items-center rounded-full p-0.5 transition-[background-color,box-shadow] duration-180 motion-reduce:transition-none',
+  { small: 'h-5 min-w-9 [--thumb:1rem]', default: 'h-6 min-w-11 [--thumb:1.25rem]', large: 'h-7 min-w-13 [--thumb:1.5rem]' }[componentSize.value],
+  'relative inline-flex shrink-0 items-center rounded-full p-0.5 transition-[background-color,box-shadow] duration-180 motion-reduce:transition-none',
   props.disabled
     ? 'bg-z-bg-container-disabled shadow-none'
-    : model.value
-      ? 'bg-z-primary shadow-z-tertiary'
-      : 'bg-(--z-switch-unchecked-bg) shadow-z-tertiary',
+    : invalid.value
+      ? model.value ? 'bg-z-error' : 'bg-z-error-container shadow-[inset_0_0_0_1px_var(--z-color-error)]'
+      : model.value
+        ? 'bg-z-primary shadow-z-tertiary'
+        : 'bg-(--z-switch-unchecked-bg) shadow-z-tertiary',
 ])
 const thumbClasses = computed(() => [
-  'absolute top-0.5 z-10 size-5 rounded-full bg-z-white shadow-z-tertiary transition-[left] duration-180 ease-out motion-reduce:transition-none',
-  model.value ? 'left-[calc(100%-1.375rem)]' : 'left-0.5',
+  'absolute top-0.5 z-10 size-(--thumb) rounded-full bg-z-white shadow-z-tertiary transition-[left] duration-180 ease-out motion-reduce:transition-none',
+  model.value ? 'left-[calc(100%-var(--thumb)-0.125rem)]' : 'left-0.5',
 ])
 const inlineTextClasses = computed(() => [
   'pointer-events-none absolute inset-0 flex min-w-0 select-none items-center justify-center overflow-hidden text-[10px] leading-none font-heavy transition-[padding,color] duration-180 motion-reduce:transition-none',
   model.value ? 'text-z-white' : props.disabled ? 'text-z-text-secondary' : 'text-(--z-switch-unchecked-color)',
-  model.value ? 'pr-6 pl-1' : 'pr-1 pl-6',
+  model.value ? 'pr-[calc(var(--thumb)+0.25rem)] pl-1' : 'pr-1 pl-[calc(var(--thumb)+0.25rem)]',
 ])
 const inactiveTextClasses = computed(() => [
-  'text-z leading-none font-emphasis transition-colors duration-150 motion-reduce:transition-none',
+  'leading-none font-emphasis transition-colors duration-150 motion-reduce:transition-none',
   model.value ? 'text-z-text-secondary' : 'text-z-primary-text',
 ])
 const activeTextClasses = computed(() => [
-  'text-z leading-none font-emphasis transition-colors duration-150 motion-reduce:transition-none',
+  'leading-none font-emphasis transition-colors duration-150 motion-reduce:transition-none',
   model.value ? 'text-z-primary-text' : 'text-z-text-secondary',
 ])
 </script>
@@ -70,8 +80,8 @@ const activeTextClasses = computed(() => [
   <!-- eslint-disable-next-line vue-a11y/label-has-for -->
   <label
     v-bind="rootAttrs"
-    class="relative inline-flex items-center gap-2.5"
-    :class="disabled ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'"
+    class="relative inline-flex items-center"
+    :class="[choiceLabelClasses[componentSize], disabled ? 'cursor-not-allowed opacity-70' : 'cursor-pointer']"
   >
     <span v-if="inactiveText && !inlinePrompt" :class="inactiveTextClasses">
       {{ inactiveText }}
@@ -105,7 +115,7 @@ const activeTextClasses = computed(() => [
       <span :class="thumbClasses" />
     </span>
     <span v-if="activeText && !inlinePrompt" :class="activeTextClasses">{{ activeText }}</span>
-    <span v-else-if="label && !hasStateText" class="text-z font-emphasis text-z-text">
+    <span v-else-if="label && !hasStateText" class="font-emphasis text-z-text">
       {{ label }}
     </span>
   </label>

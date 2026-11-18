@@ -47,12 +47,14 @@ import RadioDisabledDemo from '../examples/RadioDisabledDemo.vue'
 
 ### 属性
 
-| 属性           | 说明                                      | 类型               | 默认值  |
-| -------------- | ----------------------------------------- | ------------------ | ------- |
-| `v-model`      | 当前选中值                                | `string \| number` | 必填    |
-| `value`        | 选项值，与模型使用相同的值类型            | `string \| number` | 必填    |
-| `name / label` | 分组名和可见标签；隐藏名称使用 aria-label | `string`           | —       |
-| `disabled`     | 禁用此选项                                | `boolean`          | `false` |
+| 属性             | 说明                                      | 类型               | 默认值      |
+| ---------------- | ----------------------------------------- | ------------------ | ----------- |
+| `size`           | 组件尺寸，未指定时继承                    | `ComponentSize`    | `'default'` |
+| `validate-event` | 随控件事件触发表单校验                    | `boolean`          | `true`      |
+| `v-model`        | 当前选中值                                | `string \| number` | 必填        |
+| `value`          | 选项值，与模型使用相同的值类型            | `string \| number` | 必填        |
+| `name / label`   | 分组名和可见标签；隐藏名称使用 aria-label | `string`           | —           |
+| `disabled`       | 禁用此选项                                | `boolean`          | `false`     |
 
 ### 事件
 

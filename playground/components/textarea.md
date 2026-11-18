@@ -47,15 +47,16 @@ import TextareaAutosizeDemo from '../examples/TextareaAutosizeDemo.vue'
 
 ### 属性
 
-| 属性          | 说明                             | 类型                                                | 默认值       |
-| ------------- | -------------------------------- | --------------------------------------------------- | ------------ |
-| `v-model`     | 字符串值                         | `string`                                            | `''`         |
-| `placeholder` | 占位文字                         | `string`                                            | `''`         |
-| `size`        | 组件尺寸                         | `'small' \| 'default' \| 'large'`                   | `'default'`  |
-| `rows`        | 初始行数和 autosize 默认最小行数 | `number`                                            | `5`          |
-| `autosize`    | 随内容与宽度调整高度             | `boolean \| { minRows?: number, maxRows?: number }` | `false`      |
-| `resize`      | 拖动方向，autosize 时关闭拖动    | `'none' \| 'both' \| 'horizontal' \| 'vertical'`    | `'vertical'` |
-| `disabled`    | 禁用输入                         | `boolean`                                           | `false`      |
+| 属性             | 说明                             | 类型                                                | 默认值       |
+| ---------------- | -------------------------------- | --------------------------------------------------- | ------------ |
+| `validate-event` | 随控件事件触发表单校验           | `boolean`                                           | `true`       |
+| `v-model`        | 字符串值                         | `string`                                            | `''`         |
+| `placeholder`    | 占位文字                         | `string`                                            | `''`         |
+| `size`           | 组件尺寸                         | `'small' \| 'default' \| 'large'`                   | `'default'`  |
+| `rows`           | 初始行数和 autosize 默认最小行数 | `number`                                            | `5`          |
+| `autosize`       | 随内容与宽度调整高度             | `boolean \| { minRows?: number, maxRows?: number }` | `false`      |
+| `resize`         | 拖动方向，autosize 时关闭拖动    | `'none' \| 'both' \| 'horizontal' \| 'vertical'`    | `'vertical'` |
+| `disabled`       | 禁用输入                         | `boolean`                                           | `false`      |
 
 原生属性与 ARIA 属性传给 textarea，外层接收 class、style。输入法组合完成后更新模型
 

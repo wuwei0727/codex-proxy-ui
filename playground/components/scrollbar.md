@@ -55,13 +55,13 @@ import { ZScrollbar } from '@codex-proxy/ui'
 
 ### 属性
 
-| 属性                 | 说明                              | 类型                        | 默认值  |
-| -------------------- | --------------------------------- | --------------------------- | ------- |
-| `height / maxHeight` | 容器高度与最大高度，需带 CSS 单位 | `string`                    | —       |
-| `horizontal`         | 允许横向滚动                      | `boolean`                   | `false` |
-| `vertical`           | 允许纵向滚动                      | `boolean`                   | `true`  |
-| `alwaysVisible`      | 溢出时始终显示滚动条              | `boolean`                   | `false` |
-| `target`             | 已有滚动元素或整个页面            | `HTMLElement \| 'document'` | —       |
+| 属性                 | 说明                               | 类型                        | 默认值  |
+| -------------------- | ---------------------------------- | --------------------------- | ------- |
+| `height / maxHeight` | 容器高度与最大高度，数字按 px 处理 | `string \| number`          | —       |
+| `horizontal`         | 允许横向滚动                       | `boolean`                   | `false` |
+| `vertical`           | 允许纵向滚动                       | `boolean`                   | `true`  |
+| `alwaysVisible`      | 溢出时始终显示滚动条               | `boolean`                   | `false` |
+| `target`             | 已有滚动元素或整个页面             | `HTMLElement \| 'document'` | —       |
 
 ### 事件
 

@@ -1,20 +1,21 @@
-# v0.11.0
+# v0.12.0
 
 ## 组件
 
-- 新增标签输入框，支持回车或空格添加、拖动排序，宽度不足时折叠为 `+N`
-- 可筛选的选择器支持直接输入关键词，选中项不再显示对号
-- 统一输入框、选择器和日期选择器的留白与图标位置，修复禁用输入框显示光标的问题
-- 修复切换深色主题时表格闪白的问题
+- 新增 `ZDropdown` 操作菜单，支持键盘打开、方向键导航、选中后收起和 Esc 返回触发按钮
+- `ZIconButton` 区分普通按钮和未按下的切换按钮，让读屏软件正确识别状态
+- 配置 Provider、表单或表单项的尺寸后，子控件可继承尺寸，也可单独覆盖
+- 表单控件支持关闭事件校验，改为提交时集中校验
+- 选择器支持限制多选数量、自定义无匹配和加载文案；表格支持关闭斑马纹和指定行样式
 
 ## Playground
 
-- 按功能拆分示例，精简组件说明
+- 图标按钮示例和 API 并入 Button 页，菜单项页面新增 Dropdown 示例
 
 ## 安装
 
 ```bash
-pnpm add https://github.com/zyycn/codex-proxy-ui/releases/download/v0.11.0/codex-proxy-ui-0.11.0.tgz
+pnpm add https://github.com/zyycn/codex-proxy-ui/releases/download/v0.12.0/codex-proxy-ui-0.12.0.tgz
 ```
 
 需要 Node.js 24+、Vue 3.5+，包名为 `@codex-proxy/ui`

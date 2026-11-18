@@ -2,6 +2,7 @@
 import type { ComponentSize } from '../../shared/types'
 import { useResizeObserver } from '@vueuse/core'
 import { nextTick, shallowRef, useAttrs, useTemplateRef, watch } from 'vue'
+import { useComponentSize } from '../../shared/size'
 import { useFormField } from '../form/composables/useFormField'
 import { getInputClasses } from '../input/styles'
 
@@ -12,23 +13,26 @@ const props = withDefaults(
     placeholder?: string
     disabled?: boolean
     size?: ComponentSize
+    validateEvent?: boolean
     rows?: number
     autosize?: boolean | { minRows?: number, maxRows?: number }
     resize?: 'none' | 'both' | 'horizontal' | 'vertical'
   }>(),
   {
+    validateEvent: true,
     placeholder: '',
     disabled: false,
-    size: 'default',
     rows: 5,
     resize: 'vertical',
   },
 )
-
 const emit = defineEmits<{ input: [value: string], change: [value: string], focus: [event: FocusEvent], blur: [event: FocusEvent] }>()
+
+const componentSize = useComponentSize(() => props.size)
+
 const model = defineModel<string>({ default: '' })
 const attrs = useAttrs()
-const { controlId, invalid, describedBy, required, ariaRequired, rootAttrs, controlAttrs, validate } = useFormField(attrs)
+const { controlId, invalid, describedBy, required, ariaRequired, rootAttrs, controlAttrs, validate } = useFormField(attrs, () => props.validateEvent)
 const textareaRef = useTemplateRef<HTMLTextAreaElement>('textarea')
 const composing = shallowRef(false)
 function updateModel(event: Event) {
@@ -71,7 +75,7 @@ function resizeToContent() {
   element.style.height = 'auto'
   element.style.height = `${Math.max(minHeight, Math.min(maxHeight, element.scrollHeight))}px`
 }
-watch([model, () => props.autosize, () => props.rows, () => props.size], () => {
+watch([model, () => props.autosize, () => props.rows, componentSize], () => {
   void nextTick(resizeToContent)
 }, { immediate: true, deep: true })
 let previousWidth = 0
@@ -98,7 +102,7 @@ defineExpose({ focus: () => textareaRef.value?.focus(), blur: () => textareaRef.
       ref="textarea"
       :value="model"
       class="z-scrollbar w-full font-emphasis leading-(--field-row) placeholder:font-normal placeholder:text-z-text-quaternary"
-      :class="getInputClasses(size, disabled, invalid)"
+      :class="getInputClasses(componentSize, disabled, invalid)"
       :style="{ resize: disabled || autosize ? 'none' : resize }"
       :rows="rows"
       :placeholder="placeholder"

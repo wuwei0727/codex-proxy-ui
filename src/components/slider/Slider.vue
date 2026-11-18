@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import type { CSSProperties } from 'vue'
+import type { ComponentSize } from '../../shared/types'
 import { computed, useAttrs, useTemplateRef } from 'vue'
 import { useLocale } from '../../locale/context'
+import { useComponentSize } from '../../shared/size'
 import { useFormField } from '../form/composables/useFormField'
 
 const props = withDefaults(
   defineProps<{
+    size?: ComponentSize
+    validateEvent?: boolean
     min?: number
     max?: number
     step?: number
@@ -13,6 +17,7 @@ const props = withDefaults(
     disabled?: boolean
   }>(),
   {
+    validateEvent: true,
     min: 0,
     max: 100,
     step: 1,
@@ -20,15 +25,16 @@ const props = withDefaults(
     disabled: false,
   },
 )
-
 const emit = defineEmits<{ input: [value: number], change: [value: number], focus: [event: FocusEvent], blur: [event: FocusEvent] }>()
+
+const componentSize = useComponentSize(() => props.size)
 
 const locale = useLocale()
 
 const model = defineModel<number>({ required: true })
 const attrs = useAttrs()
 const inputRef = useTemplateRef<HTMLInputElement>('input')
-const { controlId, describedBy, invalid, ariaRequired, validate } = useFormField(attrs)
+const { controlId, describedBy, invalid, ariaRequired, validate } = useFormField(attrs, () => props.validateEvent)
 defineExpose({ focus: () => inputRef.value?.focus(), blur: () => inputRef.value?.blur() })
 
 const rangeStyle = computed<CSSProperties>(() => {
@@ -65,7 +71,8 @@ function updateModel(event: Event) {
     :aria-invalid="invalid || undefined"
     :aria-required="ariaRequired"
     :aria-valuetext="valueText"
-    class="z-slider h-5 w-full"
+    class="z-slider w-full"
+    :class="{ small: 'h-4 [--thumb:12px]', default: 'h-5 [--thumb:14px]', large: 'h-6 [--thumb:18px]' }[componentSize]"
     :style="rangeStyle"
     @input="updateModel"
     @change="emit('change', ($event.target as HTMLInputElement).valueAsNumber); validate('change')"
@@ -82,24 +89,28 @@ function updateModel(event: Event) {
   outline: none;
 }
 
+.z-slider[aria-invalid='true']:enabled {
+  --slider-accent: var(--z-color-error);
+}
+
 .z-slider::-webkit-slider-runnable-track {
   height: 4px;
   border-radius: 999px;
   background: linear-gradient(
     to right,
-    var(--z-color-primary) 0 var(--z-slider-progress),
+    var(--slider-accent, var(--z-color-primary)) 0 var(--z-slider-progress),
     var(--z-color-fill-secondary) var(--z-slider-progress) 100%
   );
 }
 
 .z-slider::-webkit-slider-thumb {
-  width: 14px;
-  height: 14px;
-  margin-top: -5px;
+  width: var(--thumb);
+  height: var(--thumb);
+  margin-top: calc((4px - var(--thumb)) / 2);
   appearance: none;
   border: 2px solid var(--z-color-bg-container);
   border-radius: 999px;
-  background: var(--z-color-primary);
+  background: var(--slider-accent, var(--z-color-primary));
   transition:
     box-shadow 150ms ease,
     transform 150ms ease;
@@ -114,15 +125,15 @@ function updateModel(event: Event) {
 .z-slider::-moz-range-progress {
   height: 4px;
   border-radius: 999px;
-  background: var(--z-color-primary);
+  background: var(--slider-accent, var(--z-color-primary));
 }
 
 .z-slider::-moz-range-thumb {
-  width: 10px;
-  height: 10px;
+  width: calc(var(--thumb) - 4px);
+  height: calc(var(--thumb) - 4px);
   border: 2px solid var(--z-color-bg-container);
   border-radius: 999px;
-  background: var(--z-color-primary);
+  background: var(--slider-accent, var(--z-color-primary));
   transition:
     box-shadow 150ms ease,
     transform 150ms ease;

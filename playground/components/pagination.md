@@ -28,13 +28,15 @@ import PaginationDemo from '../examples/PaginationDemo.vue'
 
 ### 属性
 
-| 属性                   | 说明         | 类型       | 默认值              |
-| ---------------------- | ------------ | ---------- | ------------------- |
-| `v-model:current-page` | 当前页码     | `number`   | `1`                 |
-| `v-model:page-size`    | 每页条数     | `number`   | `20`                |
-| `total`                | 总条数       | `number`   | 必填                |
-| `page-sizes`           | 条数选项     | `number[]` | `[10, 20, 50, 100]` |
-| `disabled`             | 禁用全部操作 | `boolean`  | `false`             |
+| 属性                   | 说明                   | 类型            | 默认值              |
+| ---------------------- | ---------------------- | --------------- | ------------------- |
+| `size`                 | 组件尺寸，未指定时继承 | `ComponentSize` | `'small'`           |
+| `hide-on-single-page`  | 不足两页时隐藏分页     | `boolean`       | `false`             |
+| `v-model:current-page` | 当前页码               | `number`        | `1`                 |
+| `v-model:page-size`    | 每页条数               | `number`        | `20`                |
+| `total`                | 总条数                 | `number`        | 必填                |
+| `page-sizes`           | 条数选项               | `number[]`      | `[10, 20, 50, 100]` |
+| `disabled`             | 禁用全部操作           | `boolean`       | `false`             |
 
 ### 事件
 

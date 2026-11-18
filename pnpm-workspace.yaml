@@ -3,5 +3,9 @@ packages:
 
 autoInstallPeers: false
 
+# 格式化工具使用同一小版本的原型污染修复
+overrides:
+  tinypool@2.1.0: 2.1.2
+
 allowBuilds:
   esbuild: true

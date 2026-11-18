@@ -47,13 +47,15 @@ import ColorPickerAlphaDemo from '../examples/ColorPickerAlphaDemo.vue'
 
 ### 属性
 
-| 属性          | 说明                                    | 类型                | 默认值       |
-| ------------- | --------------------------------------- | ------------------- | ------------ |
-| `v-model`     | HEX 颜色值，允许透明度时可含 Alpha 通道 | `string`            | 必填         |
-| `aria-label`  | 触发按钮名称                            | `string`            | `'选择颜色'` |
-| `presets`     | 预设颜色                                | `readonly string[]` | `[]`         |
-| `allow-alpha` | 启用透明度编辑                          | `boolean`           | `true`       |
-| `disabled`    | 禁用选择器                              | `boolean`           | `false`      |
+| 属性             | 说明                                    | 类型                | 默认值       |
+| ---------------- | --------------------------------------- | ------------------- | ------------ |
+| `size`           | 组件尺寸，未指定时继承                  | `ComponentSize`     | `'default'`  |
+| `validate-event` | 随控件事件触发表单校验                  | `boolean`           | `true`       |
+| `v-model`        | HEX 颜色值，允许透明度时可含 Alpha 通道 | `string`            | 必填         |
+| `aria-label`     | 触发按钮名称                            | `string`            | `'选择颜色'` |
+| `presets`        | 预设颜色                                | `readonly string[]` | `[]`         |
+| `allow-alpha`    | 启用透明度编辑                          | `boolean`           | `true`       |
+| `disabled`       | 禁用选择器                              | `boolean`           | `false`      |
 
 ### 事件
 

@@ -29,7 +29,6 @@ export default defineConfig({
         { text: '组件总览', link: '/components/' },
         { text: '基础', collapsed: false, items: [
           { text: 'Button 按钮', link: '/components/button' },
-          { text: 'IconButton 图标按钮', link: '/components/icon-button' },
           { text: 'Tag 标签', link: '/components/tag' },
           { text: 'MotionIcon 动效图标', link: '/components/motion-icon' },
         ] },

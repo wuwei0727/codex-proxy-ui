@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { LoaderCircle } from '@lucide/vue'
-import { computed } from 'vue'
+import { computed, inject } from 'vue'
+import { dropdownSelectKey } from '../dropdown/context'
 
 const props = withDefaults(
   defineProps<{
@@ -21,6 +22,7 @@ defineSlots<{
   default: () => unknown
 }>()
 
+const select = inject(dropdownSelectKey, undefined)
 const classes = computed(() => [
   'flex min-h-9 w-full touch-manipulation items-center gap-2 rounded-z-sm border-0 bg-transparent px-3 text-left text-z leading-none font-emphasis outline-none transition-[background-color,color] duration-150 motion-reduce:transition-none',
   'focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-z-control-outline',
@@ -32,7 +34,7 @@ const classes = computed(() => [
 </script>
 
 <template>
-  <button type="button" :class="classes" :disabled="disabled || loading" :aria-busy="loading || undefined">
+  <button type="button" :role="select ? 'menuitem' : undefined" :tabindex="select ? -1 : undefined" :class="classes" :disabled="disabled || loading" :aria-busy="loading || undefined" @click="select?.()">
     <span v-if="loading" class="inline-grid size-3.5 shrink-0 place-items-center">
       <slot name="loading">
         <LoaderCircle class="size-3.5 animate-spin motion-reduce:animate-none" />

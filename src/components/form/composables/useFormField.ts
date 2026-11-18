@@ -3,10 +3,10 @@ import type { FormValidationTrigger } from '../types'
 import { computed, inject, nextTick, onBeforeUnmount, onBeforeUpdate, shallowRef, useId } from 'vue'
 import { formFieldKey } from '../context'
 
-export function useFormField(attrs: ReturnType<typeof useAttrs>, fallbackId?: string) {
+export function useFormField(attrs: ReturnType<typeof useAttrs>, validateEvent: () => boolean) {
   const field = inject(formFieldKey, null)
   const generatedId = useId()
-  const resolveId = () => typeof attrs.id === 'string' ? attrs.id : (fallbackId ?? `control-${generatedId}`)
+  const resolveId = () => typeof attrs.id === 'string' ? attrs.id : `control-${generatedId}`
   const controlId = shallowRef(resolveId())
   // attrs 不可监听，在组件更新前同步 ID，表单项只登记控件，不向多个控件分发同一个 ID
   onBeforeUpdate(() => {
@@ -39,11 +39,11 @@ export function useFormField(attrs: ReturnType<typeof useAttrs>, fallbackId?: st
   ].includes(key))))
 
   const validate = async (trigger: FormValidationTrigger) => {
-    if (field?.isResetting.value)
+    if (!field || !validateEvent() || field.isResetting.value)
       return
     // 等待 v-model 回传到表单，避免校验到控件变更前的值
     await nextTick()
-    void field?.validate(trigger).catch(() => undefined)
+    void field.validate(trigger).catch(() => undefined)
   }
   return { controlId, labelledBy, invalid, describedBy, required, ariaRequired, rootAttrs, controlAttrs, validate }
 }
