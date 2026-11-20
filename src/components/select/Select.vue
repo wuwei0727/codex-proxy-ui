@@ -1,7 +1,7 @@
 <script setup lang="ts" generic="Multiple extends boolean = false, Value extends string | number = string">
 import type { SelectEmits, SelectOption, SelectProps, SelectSize, SelectSlots, SelectValue } from './types'
 import { ChevronDown, LoaderCircle, X } from '@lucide/vue'
-import { useEventListener } from '@vueuse/core'
+import { useEventListener, useTimeoutFn } from '@vueuse/core'
 import { computed, provide, useAttrs, useTemplateRef, watch } from 'vue'
 import { useLocale } from '../../locale/context'
 import { clearButtonClass } from '../../shared/utils/clear-button'
@@ -22,6 +22,7 @@ const props = withDefaults(
   {
     validateEvent: true,
     disabled: false,
+    debounce: 300,
     maxCollapseTags: 1,
   },
 )
@@ -89,12 +90,30 @@ const fieldAttrs = computed(() => ({
   'aria-invalid': invalid.value || undefined,
   'aria-required': ariaRequired.value,
 }) as const)
+const { start: scheduleSearch, stop: cancelSearch } = useTimeoutFn(
+  (value: string) => props.remoteMethod?.(value),
+  () => props.debounce,
+  { immediate: false },
+)
+watch(() => open.value && props.filterable && props.remote && !props.disabled, (searchable) => {
+  if (!searchable)
+    cancelSearch()
+}, { flush: 'sync' })
 const query = computed({
   get: () => search.value,
   set(value: string) {
     void openMenu()
     search.value = value
     emit('queryChange', value)
+    if (props.remote && props.remoteMethod) {
+      if (props.debounce > 0) {
+        scheduleSearch(value)
+      }
+      else {
+        cancelSearch()
+        props.remoteMethod(value)
+      }
+    }
   },
 })
 useEventListener(controlRef, 'click', (event) => {
@@ -212,7 +231,7 @@ defineExpose({ focus: () => triggerRef.value?.focus(), blur: () => triggerRef.va
         <ChevronDown
           aria-hidden="true"
           class="pointer-events-none transition-transform motion-reduce:transition-none"
-          :class="[open ? 'rotate-180 text-[color:var(--field-affix-state,var(--z-color-primary-text))]' : 'text-(color:--field-affix)', canClear && !open && 'group-focus-within/select:opacity-0 group-hover/select:opacity-0']"
+          :class="[open ? 'rotate-180 text-(--field-affix-state,var(--z-color-primary-text))' : 'text-(--field-affix)', canClear && !open && 'group-focus-within/select:opacity-0 group-hover/select:opacity-0']"
           :size="sizeConfig[componentSize].icon"
         />
         <button
@@ -241,7 +260,7 @@ defineExpose({ focus: () => triggerRef.value?.focus(), blur: () => triggerRef.va
           class="fixed z-50 rounded-z-lg border-0 bg-z-bg-elevated shadow-z-popover"
           :style="popoverStyle"
         >
-          <Scrollbar ref="scrollbarRef" :max-height="popoverMaxHeight" class="rounded-z-lg">
+          <Scrollbar ref="scrollbarRef" :max-height="popoverMaxHeight" class="rounded-z-lg" @scroll="emit('popupScroll', $event)" @end-reached="emit('endReached', $event)">
             <div
               :id="`${selectId}-listbox`"
               ref="listboxRef"

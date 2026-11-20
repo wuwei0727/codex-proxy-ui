@@ -96,22 +96,28 @@ import SelectCollapseDemo from '../examples/SelectCollapseDemo.vue'
 | `size`                                                 | 组件尺寸                                                               | `'small' \| 'default' \| 'large'` | `'default'`             |
 | `multiple`                                             | 开启多选                                                               | `boolean`                         | `false`                 |
 | `disabled / loading / filterable / clearable / remote` | 禁用、加载、搜索、清空、外部筛选                                       | `boolean`                         | `false`                 |
+| `remote-method`                                        | 远程搜索回调，接收最后一次输入的关键词                                 | `(query: string) => void`         | —                       |
+| `debounce`                                             | 远程搜索的防抖时间（毫秒），0 表示立即调用                             | `number`                          | `300`                   |
 | `placeholder / empty-text`                             | 占位和空状态                                                           | `string`                          | `'请选择' / '暂无选项'` |
 | `collapse-tags / collapse-tags-tooltip`                | 折叠标签与溢出提示                                                     | `boolean`                         | `false`                 |
 | `max-collapse-tags`                                    | 至少显示一个标签                                                       | `number`                          | `1`                     |
 
-`remote` 关闭本地筛选，搜索输入完成后发送查询词；请求、取消和结果顺序由调用方管理。通过 `ZFormItem` 或 `aria-label` 为控件命名
+`remote` 模式下，`query-change` 随输入立即发出，可用于取消旧请求。`remote-method` 在停止输入后调用，关闭菜单会取消等待中的回调。分页由 `end-reached` 触发。通过 `ZFormItem` 或 `aria-label` 为控件命名
 
 ### 事件
 
-| 事件                         | 参数         | 说明                            |
-| ---------------------------- | ------------ | ------------------------------- |
-| `update:modelValue / change` | 当前模型值   | 模型变化 / 用户选择、移除或清空 |
-| `clear`                      | 无           | 清空选择                        |
-| `remove-tag`                 | `Value`      | 用户移除一个标签                |
-| `visible-change`             | `boolean`    | 菜单显隐变化                    |
-| `query-change`               | `string`     | 搜索输入完成                    |
-| `focus / blur`               | `FocusEvent` | 触发控件焦点变化                |
+| 事件                         | 参数                          | 说明                            |
+| ---------------------------- | ----------------------------- | ------------------------------- |
+| `update:modelValue / change` | 当前模型值                    | 模型变化 / 用户选择、移除或清空 |
+| `clear`                      | 无                            | 清空选择                        |
+| `remove-tag`                 | `Value`                       | 用户移除一个标签                |
+| `visible-change`             | `boolean`                     | 菜单显隐变化                    |
+| `query-change`               | `string`                      | 搜索输入完成                    |
+| `popup-scroll`               | `{ scrollTop, scrollLeft }`   | 下拉浮层的滚动坐标              |
+| `end-reached`                | `top / bottom / left / right` | 滚动到达的边界方向              |
+| `focus / blur`               | `FocusEvent`                  | 触发控件焦点变化                |
+
+远程分页时监听 `end-reached`，方向为 `bottom`、有下一页且请求空闲时才加载。将新选项追加到原列表会保留滚动位置与键盘焦点，`loading` 用于替换整份结果时的加载提示。
 
 ### 插槽
 

@@ -1,4 +1,5 @@
 import type { ComponentSize } from '../../shared/types'
+import type { ScrollbarDirection, ScrollbarPosition } from '../scrollbar/types'
 
 export type SelectSize = ComponentSize
 export type SelectOptionValue = string | number
@@ -24,6 +25,8 @@ export interface SelectProps<Multiple extends boolean = false, Value extends Sel
   filterable?: boolean
   clearable?: boolean
   remote?: boolean
+  remoteMethod?: (query: string) => void
+  debounce?: number
   collapseTags?: boolean
   collapseTagsTooltip?: boolean
   maxCollapseTags?: number
@@ -43,6 +46,8 @@ export interface SelectEmits<Multiple extends boolean = false, Value extends Sel
   removeTag: [value: Value]
   visibleChange: [visible: boolean]
   queryChange: [query: string]
+  popupScroll: [position: ScrollbarPosition]
+  endReached: [direction: ScrollbarDirection]
   focus: [event: FocusEvent]
   blur: [event: FocusEvent]
 }

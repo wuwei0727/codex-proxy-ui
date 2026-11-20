@@ -65,9 +65,10 @@ import { ZScrollbar } from '@codex-proxy/ui'
 
 ### 事件
 
-| 事件     | 说明                                        |
-| -------- | ------------------------------------------- |
-| `scroll` | `{ scrollTop: number, scrollLeft: number }` |
+| 事件          | 说明                                          |
+| ------------- | --------------------------------------------- |
+| `scroll`      | `{ scrollTop: number, scrollLeft: number }`   |
+| `end-reached` | 到达的边界方向，`top / bottom / left / right` |
 
 ### 插槽
 
