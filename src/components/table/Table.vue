@@ -210,7 +210,7 @@ function sortButtonLabel(column: ResolvedTableColumn<Row>) {
           <colgroup>
             <col v-for="column in computedColumns" :key="column.key" :style="columnStyle(column, computedColumns)">
           </colgroup>
-          <thead class="sticky top-0 z-30 before:pointer-events-none before:absolute before:inset-0 before:-z-1 before:rounded-z before:bg-(--z-table-header-bg) before:shadow-[0_10px_16px_-18px_var(--z-color-shadow)]">
+          <thead class="sticky top-0 z-30 rounded-z bg-(--z-table-header-bg) shadow-[0_10px_16px_-18px_var(--z-color-shadow)]">
             <tr class="h-(--table-header-height) font-bold text-z-text-secondary" :class="{ small: 'text-z-xs', default: 'text-z-sm', large: 'text-z' }[componentSize]">
               <th
                 v-for="(column, columnIndex) in computedColumns"
