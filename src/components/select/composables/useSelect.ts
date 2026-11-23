@@ -225,15 +225,23 @@ export function useSelect<Multiple extends boolean, Value extends SelectOptionVa
   }
 
   watch(
-    () => [displayed.value, componentSize.value, props.multipleLimit],
-    async () => {
+    [displayed, componentSize, () => props.multipleLimit],
+    async ([items, size, limit], [previous, oldSize, oldLimit]) => {
       if (!open.value)
         return
-      setActiveToSelected()
+      // 远程结果只在末尾追加时，保留当前滚动位置和键盘定位的选项。
+      const active = items[activeIndex.value]
+      const appended = props.remote && size === oldSize && limit === oldLimit
+        && active && !isOptionDisabled(active) && previous.length < items.length
+        && previous.every((option, index) => option.value === items[index]?.value)
+      if (!appended)
+        setActiveToSelected()
       await nextTick()
       updatePopoverPosition()
-      await nextTick()
-      scrollActiveIntoView()
+      if (!appended) {
+        await nextTick()
+        scrollActiveIntoView()
+      }
     },
   )
 

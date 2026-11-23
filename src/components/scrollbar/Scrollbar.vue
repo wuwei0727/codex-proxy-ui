@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { ScrollbarDirection, ScrollbarPosition } from './types'
 import { useEventListener, useResizeObserver, useTimeoutFn } from '@vueuse/core'
 import { clamp } from 'es-toolkit'
 import { computed, nextTick, onBeforeUnmount, onMounted, shallowRef, useTemplateRef, watch } from 'vue'
@@ -23,7 +24,8 @@ const props = withDefaults(
 )
 
 const emit = defineEmits<{
-  scroll: [payload: { scrollTop: number, scrollLeft: number }]
+  scroll: [payload: ScrollbarPosition]
+  endReached: [direction: ScrollbarDirection]
 }>()
 
 const overflowTolerance = 1
@@ -67,6 +69,8 @@ let horizontalDragStartX = 0
 let horizontalDragStartScrollLeft = 0
 let scrollTopPosition = 0
 let scrollLeftPosition = 0
+let lastEmittedTop = 0
+let lastEmittedLeft = 0
 let scrollFrameId: number | undefined
 const { start: startHideTimer, stop: stopHideTimer } = useTimeoutFn(hideScrollbar, 1600, {
   immediate: false,
@@ -294,10 +298,23 @@ function flushScrollFrame() {
 
   syncScrollbarPosition(wrap)
   activateScrollbar()
-  emit('scroll', {
-    scrollTop: wrap.scrollTop,
-    scrollLeft: wrap.scrollLeft,
-  })
+  const { scrollTop, scrollLeft, clientHeight, clientWidth, scrollHeight, scrollWidth } = wrap
+  emit('scroll', { scrollTop, scrollLeft })
+  // 一帧可能同时到达两个轴的边界，尺寸重测不应吞掉滚动事件。
+  if (scrollHeight - clientHeight > overflowTolerance) {
+    if (scrollTop > lastEmittedTop && scrollHeight - clientHeight - scrollTop <= overflowTolerance)
+      emit('endReached', 'bottom')
+    else if (scrollTop < lastEmittedTop && scrollTop <= overflowTolerance)
+      emit('endReached', 'top')
+  }
+  if (scrollWidth - clientWidth > overflowTolerance) {
+    if (scrollLeft > lastEmittedLeft && scrollWidth - clientWidth - scrollLeft <= overflowTolerance)
+      emit('endReached', 'right')
+    else if (scrollLeft < lastEmittedLeft && scrollLeft <= overflowTolerance)
+      emit('endReached', 'left')
+  }
+  lastEmittedTop = scrollTop
+  lastEmittedLeft = scrollLeft
 }
 
 function handleScroll() {
@@ -463,7 +480,11 @@ useEventListener(
   handleScroll,
   { passive: true },
 )
-watch(wrapRef, () => nextTick(update), { flush: 'post' })
+watch(wrapRef, (wrap) => {
+  lastEmittedTop = wrap?.scrollTop ?? 0
+  lastEmittedLeft = wrap?.scrollLeft ?? 0
+  void nextTick(update)
+}, { flush: 'post', immediate: true })
 watch(
   () => props.target ? wrapRef.value : null,
   (target, _, onCleanup) => {

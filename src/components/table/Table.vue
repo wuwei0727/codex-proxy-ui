@@ -405,17 +405,18 @@ function sortButtonLabel(column: ResolvedTableColumn<Row>) {
           <colgroup>
             <col v-for="column in computedColumns" :key="column.key" :style="columnStyle(column, computedColumns)">
           </colgroup>
-          <thead>
+          <thead class="sticky top-0 z-30 rounded-z bg-(--z-table-header-bg) shadow-[0_10px_16px_-18px_var(--z-color-shadow)]">
             <tr class="h-(--table-header-height) font-bold text-z-text-secondary" :class="{ small: 'text-z-xs', default: 'text-z-sm', large: 'text-z' }[componentSize]">
               <th
                 v-for="(column, columnIndex) in computedColumns"
                 :key="column.key"
-                class="relative group/th sticky top-0 select-none whitespace-nowrap bg-(--z-table-header-bg) shadow-[0_10px_16px_-18px_var(--z-color-shadow)]"
+                class="relative group/th select-none whitespace-nowrap"
                 :class="[
                   column.paddingClass ?? cellPaddingClass,
                   headerAlignClass(column),
                   columnIndex === 0 ? 'rounded-l-z' : undefined,
                   columnIndex === computedColumns.length - 1 ? 'rounded-r-z' : undefined,
+                  column.sticky && 'bg-(--z-table-header-bg)',
                   stickyClass(column, true),
                   resizingColumnKey === column.key ? 'z-50' : 'hover:z-40 z-30',
                 ]"
