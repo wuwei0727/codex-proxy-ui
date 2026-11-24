@@ -37,7 +37,7 @@ const componentSize = useComponentSize(() => props.size)
 const attrs = useAttrs()
 const rootRef = useTemplateRef<HTMLElement>('root')
 const optionRefs = useTemplateRef<HTMLButtonElement[]>('option')
-const { controlId, labelledBy, describedBy, invalid, ariaRequired, validate } = useFormField(attrs, () => props.validateEvent)
+const { controlId, labelledBy, describedBy, invalid, ariaRequired, validate } = useFormField(attrs, () => props.validateEvent, { labelable: false })
 defineExpose({ focus: () => rootRef.value?.querySelector<HTMLButtonElement>('[tabindex="0"]')?.focus() })
 const model = defineModel<string>({ required: true })
 

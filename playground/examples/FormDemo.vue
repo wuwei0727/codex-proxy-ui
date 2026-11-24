@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { FormInstance, FormRules } from '@codex-proxy/ui'
-import { ZButton, ZForm, ZFormItem, ZInput, ZInputNumber, ZTextarea } from '@codex-proxy/ui'
+import { ZButton, ZForm, ZFormItem, ZInput, ZInputNumber, ZSegmented, ZTextarea } from '@codex-proxy/ui'
 import { reactive, ref, useTemplateRef } from 'vue'
 
-interface RuleForm { name: string, order: number, description: string }
+interface RuleForm { name: string, mode: string, order: number, description: string }
 const form = useTemplateRef<FormInstance>('form')
-const model = reactive<RuleForm>({ name: '请求工作台', order: 0, description: '为指定请求添加响应标记' })
+const model = reactive<RuleForm>({ name: '请求工作台', mode: '', order: 0, description: '为指定请求添加响应标记' })
 const result = ref('')
 const rules = reactive<FormRules<RuleForm>>({
   name: [
@@ -13,6 +13,7 @@ const rules = reactive<FormRules<RuleForm>>({
     { min: 3, max: 12, message: '名称长度为 3 到 12 个字符', trigger: 'blur' },
   ],
   order: { type: 'integer', min: 0, message: '执行顺序必须为非负整数', trigger: 'change' },
+  mode: { required: true, message: '请选择执行方式', trigger: 'change' },
 })
 async function save() {
   const valid = await form.value?.validate().catch(() => false)
@@ -33,6 +34,9 @@ function reset() {
       <ZFormItem prop="order" label="执行顺序">
         <ZInputNumber v-model="model.order" aria-label="执行顺序" :min="0" class="demo-wide" />
       </ZFormItem>
+      <ZFormItem prop="mode" label="执行方式" description="选择同步或异步执行">
+        <ZSegmented v-model="model.mode" :options="[{ label: '同步', value: 'sync' }, { label: '异步', value: 'async' }]" />
+      </ZFormItem>
       <ZFormItem prop="description" label="说明">
         <ZTextarea v-model="model.description" :autosize="{ minRows: 2, maxRows: 5 }" />
       </ZFormItem>
@@ -45,6 +49,9 @@ function reset() {
         </ZButton>
         <ZButton @click="form?.clearValidate()">
           清空校验
+        </ZButton>
+        <ZButton @click="form?.focusField('mode')">
+          聚焦执行方式
         </ZButton>
       </div>
       <output v-if="result" aria-label="保存结果">{{ result }}</output>
