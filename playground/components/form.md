@@ -49,6 +49,8 @@ import FormDemo from '../examples/FormDemo.vue'
 
 设置 `label-position` 调整标签位置。水平布局使用 `label-width="auto"` 可按最长标签对齐。多个控件共用一个标签时，需分别提供可访问名称。
 
+单个原生控件通过 `label for` 关联。Segmented 等分组控件使用可见文字与 `aria-labelledby` 关联，显式 `aria-label` 可覆盖组名称；帮助、错误和必填状态仍传递给整个组。`focusField()` 聚焦原生控件或组内当前可通过 Tab 访问的选项
+
 ## 校验规则
 
 通过 `rules` 设置[校验规则](https://github.com/react-component/async-validator#rules)，使用 `trigger` 指定 `blur` 或 `change`。调用 `validate()` 可检查整个表单。
